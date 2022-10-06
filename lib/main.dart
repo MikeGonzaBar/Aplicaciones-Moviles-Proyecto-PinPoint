@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pinpoint/pages/home_page.dart';
+import 'package:pinpoint/pages/login.dart';
 
 void main() => runApp(const MyApp());
 
@@ -9,8 +9,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(primaryColor: Color(0xFF009fb7)),
       title: 'Material App',
-      home: HomePage(),
+      home: LoginPage(),
     );
   }
 }
