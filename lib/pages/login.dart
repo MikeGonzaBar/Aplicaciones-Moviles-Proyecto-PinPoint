@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pinpoint/pages/main_page.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -52,10 +53,21 @@ class LoginPage extends StatelessWidget {
                 ),
               ),
               MaterialButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context)
+                    ..pop()
+                    ..push(
+                      MaterialPageRoute(
+                        builder: (context) => MainPage(),
+                      ),
+                    );
+                },
                 color: Color(0xFF009fb7),
                 minWidth: (MediaQuery.of(context).size.width / 8) * 7,
-                child: Text("LOG IN"),
+                child: Text(
+                  "LOG IN",
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.all(4.0),
@@ -69,7 +81,7 @@ class LoginPage extends StatelessWidget {
                 onPressed: () {},
                 color: Color(0xFF009fb7),
                 minWidth: (MediaQuery.of(context).size.width / 8) * 7,
-                child: Text("REGISTER"),
+                child: Text("REGISTER", style: TextStyle(color: Colors.white)),
               ),
             ],
           ),
