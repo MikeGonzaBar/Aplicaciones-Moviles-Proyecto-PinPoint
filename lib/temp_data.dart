@@ -28,8 +28,49 @@ List<dynamic> comments = [
     "postId": "post2",
     "commentId": "comment1",
     "comment": "Yo quierooo. Iré a las 11",
-    "votes": 2
-  }
+    "votes": 2,
+    "myVote": ""
+  },
+  {
+    "authorId": "user3",
+    "postId": "post2",
+    "commentId": "comment1",
+    "comment": "Otro comentario random",
+    "votes": 8,
+    "myVote": ""
+  },
+  {
+    "authorId": "user1",
+    "postId": "post2",
+    "commentId": "comment1",
+    "comment": "Yo quierooo. Iré a las 11",
+    "votes": 2,
+    "myVote": ""
+  },
+  {
+    "authorId": "user3",
+    "postId": "post2",
+    "commentId": "comment1",
+    "comment": "Otro comentario random",
+    "votes": 8,
+    "myVote": ""
+  },
+  {
+    "authorId": "user1",
+    "postId": "post2",
+    "commentId": "comment1",
+    "comment": "Yo quierooo. Iré a las 11",
+    "votes": 2,
+    "myVote": ""
+  },
+  {
+    "authorId": "user3",
+    "postId": "post2",
+    "commentId": "comment1",
+    "comment": "Otro comentario random",
+    "votes": 8,
+    "myVote": ""
+  },
 ];
 
 List<dynamic> usersList = [
