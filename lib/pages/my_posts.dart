@@ -24,7 +24,7 @@ class MyPosts extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.only(top: 16.0),
                   child: Text(
-                    "Usuario desde hace 1m",
+                    "User since 1m",
                     style: TextStyle(fontSize: 16),
                     textAlign: TextAlign.center,
                   ),
@@ -32,7 +32,7 @@ class MyPosts extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.only(top: 8),
                   child: Text(
-                    "¡Has recolectado 95 likes!",
+                    "You have collected 95 votes!",
                     style: TextStyle(fontSize: 16),
                     textAlign: TextAlign.center,
                   ),
@@ -40,7 +40,7 @@ class MyPosts extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.only(top: 16.0),
                   child: Text(
-                    "Tus PinPoints más recientes:",
+                    "Your most recent PinPoints:",
                     style: TextStyle(
                       fontSize: 16,
                     ),

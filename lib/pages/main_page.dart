@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:pinpoint/pages/feed.dart';
 import 'package:pinpoint/pages/my_posts.dart';
+import 'package:pinpoint/pages/new_post.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -15,22 +16,10 @@ class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  static const List<Widget> _widgetOptions = <Widget>[
-    Feed(),
-    // Text(
-    //   //CHANGE ALL THESE STATES FOR THE NEW WIDGETS
-    //   'Index 0: PinPoints',
-    //   style: optionStyle,
-    // ),
-    Text(
-      'Index 1: New PinPoint',
-      style: optionStyle,
-    ),
-    MyPosts()
-    // Text(
-    //   'Index 2: My Posts',
-    //   style: optionStyle,
-    // ),
+  static const List<Widget> _widgetOptions = [
+    Feed(), //INDEX 1
+    NewPost(), //INDEX 2
+    MyPosts() //INDEX 3
   ];
 
   void _onItemTapped(int index) {
@@ -40,10 +29,10 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
-  static const List<Widget> _appbarOptions = <Widget>[
+  static const List<Widget> _appbarOptions = [
     Text("PinPoint"),
-    Text("Nuevo PinPoint"),
-    Text("Mis Pinpoints")
+    Text("New PinPoint"),
+    Text("My Pinpoints")
   ];
 
   @override
