@@ -7,63 +7,68 @@ class PostItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 15.0, left: 8.0, right: 8.0),
+      // TODO: CHECK PADDING HERE
+      padding: const EdgeInsets.only(top: 12.0, left: 12.0, right: 12.0),
       child: Container(
         decoration: BoxDecoration(
-          color: Color.fromARGB(255, 229, 231, 233),
-          borderRadius: BorderRadius.circular(12),
+          color: Color(0xffe8eaed),
+          borderRadius: BorderRadius.circular(15),
         ),
+        padding: EdgeInsets.all(18),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Text(
-                postObject["text"],
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-              ),
+            // MAIN TEXT
+            Text(
+              postObject["text"],
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
             ),
+            // IMAGE
             if (postObject["image"] != "")
-              Container(
-                height: 200,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(postObject["image"]),
-                    fit: BoxFit.fitHeight,
+              Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: Center(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: Image(
+                      width: MediaQuery.of(context).size.width * 0.75,
+                      image: AssetImage(postObject["image"]),
+                    ),
                   ),
                 ),
               ),
+            // AUTHOR
             Padding(
-              padding: const EdgeInsets.only(left: 10.0, top: 5),
+              padding: const EdgeInsets.only(top: 6),
               child: Text(
-                "${postObject["anonymous"] ? "Anónimo" : "Martha Y"}",
-                style: TextStyle(fontWeight: FontWeight.w500),
+                "${postObject["anonymous"] ? "Anónimo" : postObject["author"]}",
+                style: const TextStyle(fontWeight: FontWeight.w500),
                 textAlign: TextAlign.start,
               ),
             ),
+            // POST INFO AND BUTTONS
             Padding(
-              padding: const EdgeInsets.only(left: 5.0, top: 5, bottom: 10),
+              padding: const EdgeInsets.only(top: 16),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Expanded(
                     flex: 5,
-                    child: Row(
-                      children: [
-                        Text(
-                          "📍${postObject["closeness"]} • ${postObject["timestamp"]}",
-                          style: TextStyle(fontWeight: FontWeight.w600),
-                        ),
-                        Icon(
-                          Icons.share,
-                          size: 20,
-                        ),
-                      ],
+                    child: Text(
+                      "📍${postObject["closeness"]} • ${postObject["timestamp"]}",
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Icon(
+                      Icons.share,
+                      size: 20,
                     ),
                   ),
                   Expanded(
                     flex: 2,
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Icon(
                           Icons.comment_outlined,
@@ -76,6 +81,7 @@ class PostItem extends StatelessWidget {
                   Expanded(
                     flex: 3,
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Icon(
                           (Icons.keyboard_arrow_down_rounded),

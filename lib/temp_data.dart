@@ -13,6 +13,7 @@ List<dynamic> myPostsList = [
     "text": "Vendo stickers en el tianguis del ombligo :)",
     "image": "assets/images/gatosIteso.png",
     "anonymous": false,
+    "author": "Martha Y",
     "closeness": "a 500m",
     "timestamp": "2h",
     "commentsNumber": 7,
@@ -48,4 +49,51 @@ List<dynamic> usersList = [
       "qtty_likes": 32,
     },
   }
+];
+
+List<dynamic> FeedList = [
+  {
+    "text": "Vi a Spiderman pasar por el D. No más robos de carros 🕷",
+    "image": "",
+    "anonymous": true,
+    "author": "",
+    "closeness": "Cerca de ti",
+    "timestamp": "33m",
+    "commentsNumber": 11,
+    "votes": 74,
+    "myVote": "up"
+  },
+  {
+    "text": "Vendo stickers en el tianguis del ombligo :)",
+    "image": "assets/images/gatosIteso.png",
+    "anonymous": false,
+    "author": "Martha Yepez",
+    "closeness": "a 500m",
+    "timestamp": "2h",
+    "commentsNumber": 7,
+    "votes": 21,
+    "myVote": ""
+  },
+  {
+    "text": "Extrañaba los jardines del ITESO. De plano hice un picnic",
+    "image": "",
+    "anonymous": false,
+    "author": "Ale E",
+    "closeness": "Cerca de ti",
+    "timestamp": "hace 1h",
+    "commentsNumber": 3,
+    "votes": 32,
+    "myVote": ""
+  },
+  {
+    "text": "TEST TEST TEST",
+    "image": "",
+    "anonymous": false,
+    "author": "idk anyone",
+    "closeness": "Cerca de ti",
+    "timestamp": "hace 3h",
+    "commentsNumber": 8,
+    "votes": 11,
+    "myVote": ""
+  },
 ];

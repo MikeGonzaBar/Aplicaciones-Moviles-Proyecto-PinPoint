@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:pinpoint/pages/feed.dart';
 import 'package:pinpoint/pages/my_posts.dart';
 
 class MainPage extends StatefulWidget {
@@ -15,11 +16,12 @@ class _MainPageState extends State<MainPage> {
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static const List<Widget> _widgetOptions = <Widget>[
-    Text(
-      //CHANGE ALL THESE STATES FOR THE NEW WIDGETS
-      'Index 0: PinPoints',
-      style: optionStyle,
-    ),
+    Feed(),
+    // Text(
+    //   //CHANGE ALL THESE STATES FOR THE NEW WIDGETS
+    //   'Index 0: PinPoints',
+    //   style: optionStyle,
+    // ),
     Text(
       'Index 1: New PinPoint',
       style: optionStyle,
@@ -55,7 +57,7 @@ class _MainPageState extends State<MainPage> {
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.place_outlined),
             label: "PinPoints",
