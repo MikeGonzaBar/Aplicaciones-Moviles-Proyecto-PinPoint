@@ -30,9 +30,9 @@ class _NewPostState extends State<NewPost> {
                   TextField(
                     controller: txtController,
                     maxLines: 3,
-                    style: TextStyle(fontWeight: FontWeight.w600),
-                    cursorColor: Color(0xFF009fb7),
-                    decoration: InputDecoration(
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                    cursorColor: const Color(0xFF009fb7),
+                    decoration: const InputDecoration(
                       labelText: 'Write your PinPoint',
                       border: InputBorder.none,
                     ),
@@ -50,7 +50,7 @@ class _NewPostState extends State<NewPost> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                const Text(
                   "Publish anonymously",
                   style: TextStyle(fontWeight: FontWeight.w600),
                 ),
@@ -59,17 +59,17 @@ class _NewPostState extends State<NewPost> {
                   onChanged: (value) {
                     setState(() {
                       isAnon = value;
-                      print(isAnon);
                     });
                   },
-                  activeTrackColor: Color.fromARGB(255, 145, 200, 209),
-                  activeColor: Color(0xFF009fb7),
-                  inactiveTrackColor: Color(0xffe8eaed),
-                  inactiveThumbColor: Color(0xFF8492A6),
+                  activeTrackColor: const Color.fromARGB(255, 145, 200, 209),
+                  activeColor: const Color(0xFF009fb7),
+                  inactiveTrackColor: const Color(0xffe8eaed),
+                  inactiveThumbColor: const Color(0xFF8492A6),
                 ),
               ],
             ),
-            Text("Publish for:", style: TextStyle(fontWeight: FontWeight.w600)),
+            const Text("Publish for:",
+                style: TextStyle(fontWeight: FontWeight.w600)),
             Padding(
               padding: const EdgeInsets.only(top: 16.0),
               child: Row(
@@ -79,72 +79,69 @@ class _NewPostState extends State<NewPost> {
                     onPressed: () {
                       setState(() {
                         daysActive = 1;
-                        print(isAnon);
                       });
                     },
                     style: ElevatedButton.styleFrom(
-                      fixedSize: Size(100, 50),
+                      fixedSize: const Size(100, 50),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8), // <-- Radius
                       ),
                       backgroundColor: daysActive == 1
-                          ? Color(0xFF009fb7)
-                          : Color(0xFFC0CCDA),
+                          ? const Color(0xFF009fb7)
+                          : const Color(0xFFC0CCDA),
                     ),
-                    child: Text("1 dia"),
+                    child: const Text("1 dia"),
                   ),
                   ElevatedButton(
                     onPressed: () {
                       setState(() {
                         daysActive = 7;
-                        print(isAnon);
                       });
                     },
                     style: ElevatedButton.styleFrom(
-                      fixedSize: Size(100, 50),
+                      fixedSize: const Size(100, 50),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8), // <-- Radius
                       ),
                       backgroundColor: daysActive == 7
-                          ? Color(0xFF009fb7)
-                          : Color(0xFFC0CCDA),
+                          ? const Color(0xFF009fb7)
+                          : const Color(0xFFC0CCDA),
                     ),
-                    child: Text("7 dias"),
+                    child: const Text("7 dias"),
                   ),
                   ElevatedButton(
                     onPressed: () {
                       setState(() {
                         daysActive = 15;
-                        print(isAnon);
                       });
                     },
                     style: ElevatedButton.styleFrom(
-                      fixedSize: Size(100, 50),
+                      fixedSize: const Size(100, 50),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8), // <-- Radius
                       ),
                       backgroundColor: daysActive == 15
-                          ? Color(0xFF009fb7)
-                          : Color(0xFFC0CCDA),
+                          ? const Color(0xFF009fb7)
+                          : const Color(0xFFC0CCDA),
                     ),
-                    child: Text("15 dias"),
+                    child: const Text("15 dias"),
                   ),
                 ],
               ),
             ),
-            Spacer(),
+            const Spacer(),
             Align(
               alignment: Alignment.bottomRight,
               child: ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
-                  fixedSize: Size(100, 50),
+                  fixedSize: const Size(100, 50),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8), // <-- Radius
                   ),
-                  backgroundColor: Color(0xFF009fb7),
+                  backgroundColor: const Color(0xFF009fb7),
                 ),
-                child: Text("Publish"),
+                child: const Text("Publish"),
               ),
             ),
           ],
