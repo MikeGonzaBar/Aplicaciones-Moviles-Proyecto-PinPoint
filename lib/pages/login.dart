@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pinpoint/pages/main_page.dart';
+import 'package:pinpoint/pages/register.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -18,8 +19,8 @@ class LoginPage extends StatelessWidget {
           width: MediaQuery.of(context).size.width,
           child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(25.0),
+              const Padding(
+                padding: EdgeInsets.all(25.0),
                 child: Icon(
                   Icons.place_outlined,
                   color: Color(0xFF009fb7),
@@ -30,10 +31,10 @@ class LoginPage extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 8.0, left: 20, right: 20),
                 child: TextField(
                   controller: usrController,
-                  decoration: InputDecoration(
-                    labelText: "Username or Email",
-                    border: const UnderlineInputBorder(),
-                    focusedBorder: const OutlineInputBorder(),
+                  decoration: const InputDecoration(
+                    labelText: "Email",
+                    border: UnderlineInputBorder(),
+                    focusedBorder: OutlineInputBorder(),
                   ),
                 ),
               ),
@@ -45,10 +46,10 @@ class LoginPage extends StatelessWidget {
                   obscureText: true,
                   enableSuggestions: false,
                   autocorrect: false,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: "Password",
-                    border: const UnderlineInputBorder(),
-                    focusedBorder: const OutlineInputBorder(),
+                    border: UnderlineInputBorder(),
+                    focusedBorder: OutlineInputBorder(),
                   ),
                 ),
               ),
@@ -58,13 +59,13 @@ class LoginPage extends StatelessWidget {
                     ..pop()
                     ..push(
                       MaterialPageRoute(
-                        builder: (context) => MainPage(),
+                        builder: (context) => const MainPage(),
                       ),
                     );
                 },
-                color: Color(0xFF009fb7),
+                color: const Color(0xFF009fb7),
                 minWidth: (MediaQuery.of(context).size.width / 8) * 7,
-                child: Text(
+                child: const Text(
                   "LOG IN",
                   style: TextStyle(color: Colors.white),
                 ),
@@ -78,10 +79,19 @@ class LoginPage extends StatelessWidget {
                 ),
               ),
               MaterialButton(
-                onPressed: () {},
-                color: Color(0xFF009fb7),
+                onPressed: () {
+                  Navigator.of(context)
+                    ..pop()
+                    ..push(
+                      MaterialPageRoute(
+                        builder: (context) => const RegsiterPage(),
+                      ),
+                    );
+                },
+                color: const Color(0xFF009fb7),
                 minWidth: (MediaQuery.of(context).size.width / 8) * 7,
-                child: Text("REGISTER", style: TextStyle(color: Colors.white)),
+                child: const Text("REGISTER",
+                    style: TextStyle(color: Colors.white)),
               ),
             ],
           ),
