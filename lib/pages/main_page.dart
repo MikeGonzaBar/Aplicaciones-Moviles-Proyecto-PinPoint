@@ -57,7 +57,7 @@ class _MainPageState extends State<MainPage> {
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: [
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.place_outlined),
             label: "PinPoints",
@@ -72,7 +72,7 @@ class _MainPageState extends State<MainPage> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Color(0xFF009fb7),
+        selectedItemColor: const Color(0xFF009fb7),
         onTap: _onItemTapped,
       ),
     );
