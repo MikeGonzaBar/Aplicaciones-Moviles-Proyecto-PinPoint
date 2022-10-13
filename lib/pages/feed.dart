@@ -6,15 +6,20 @@ class Feed extends StatelessWidget {
   const Feed({super.key});
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: ListView.builder(
-        itemCount: temp_data.FeedList.length,
-        itemBuilder: (BuildContext context, int index) {
-          return PostItem(
-            postObject: temp_data.FeedList[index],
-          );
-        },
-      ),
+    return Column(
+      children: [
+        Expanded(
+          child: ListView.builder(
+            itemCount: temp_data.feedList.length,
+            itemBuilder: (BuildContext context, int index) {
+              return PostItem(
+                postObject: temp_data.feedList[index],
+              );
+            },
+          ),
+        ),
+        Center()
+      ],
     );
   }
 }
