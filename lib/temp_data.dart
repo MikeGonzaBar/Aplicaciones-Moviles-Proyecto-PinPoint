@@ -92,7 +92,7 @@ List<dynamic> usersList = [
   }
 ];
 
-List<dynamic> FeedList = [
+List<dynamic> feedList = [
   {
     "text": "Vi a Spiderman pasar por el D. No más robos de carros 🕷",
     "image": "",

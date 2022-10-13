@@ -14,7 +14,7 @@ class CommentSection extends StatelessWidget {
         title: const Text('Comentarios'),
         backgroundColor: const Color(0xFF009fb7),
       ),
-      body: Container(
+      body: SizedBox(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
         child: Stack(
@@ -162,18 +162,22 @@ class CommentSection extends StatelessWidget {
               right: 20,
               child: Center(
                 child: Container(
+                  // color: Colors.red,
                   width: MediaQuery.of(context).size.width,
+                  height: 50,
                   child: TextField(
                     controller: commentController,
                     decoration: InputDecoration(
+                      hintText: "Comment something...",
+                      // label: Text("Hello"),
+                      // labelText: "Comment something...",
+                      filled: true,
+                      fillColor: const Color(0xfffafafa),
+                      border: const OutlineInputBorder(),
                       suffixIcon: IconButton(
                         icon: const Icon(Icons.send),
                         onPressed: () {},
                       ),
-                      labelText: "Comment something...",
-                      filled: true,
-                      fillColor: const Color(0xfffafafa),
-                      border: const OutlineInputBorder(),
                       // focusedBorder: OutlineInputBorder(),
                     ),
                   ),

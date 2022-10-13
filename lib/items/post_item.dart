@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:pinpoint/pages/comment_section.dart';
 
@@ -11,8 +9,6 @@ class PostItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: (() {
-        log("OPENING POST");
-        print(postObject);
         Navigator.of(context).push(
           MaterialPageRoute(
               builder: (context) => CommentSection(postData: postObject)),
