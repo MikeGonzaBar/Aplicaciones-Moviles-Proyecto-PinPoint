@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pinpoint/items/comment_item.dart';
+import '../items/end_of_scroll_item.dart';
 import '../temp_data.dart' as temp_data;
 
 class CommentSection extends StatelessWidget {
@@ -143,10 +144,15 @@ class CommentSection extends StatelessWidget {
                         ListView.builder(
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
-                          itemCount: temp_data.comments.length,
+                          itemCount: temp_data.comments.length + 1,
                           itemBuilder: (BuildContext context, int index) {
-                            return CommentItem(
-                                commentData: temp_data.comments[index]);
+                            if (index != temp_data.comments.length) {
+                              return CommentItem(
+                                  commentData: temp_data.comments[index]);
+                            } else {
+                              // If index is last, add ending dot
+                              return EndOfScrollItem();
+                            }
                           },
                         ),
                       ],

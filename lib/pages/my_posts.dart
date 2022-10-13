@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pinpoint/items/post_item.dart';
+import '../items/end_of_scroll_item.dart';
 import '../temp_data.dart' as temp_data;
 
 class MyPosts extends StatelessWidget {
@@ -53,11 +54,16 @@ class MyPosts extends StatelessWidget {
           ListView.builder(
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
-            itemCount: temp_data.myPostsList.length,
+            itemCount: temp_data.myPostsList.length + 1,
             itemBuilder: (BuildContext context, int index) {
-              return PostItem(
-                postObject: temp_data.myPostsList[index],
-              );
+              if (index != temp_data.myPostsList.length) {
+                return PostItem(
+                  postObject: temp_data.myPostsList[index],
+                );
+              } else {
+                // If index is last, add ending dot
+                return EndOfScrollItem();
+              }
             },
           )
         ],
