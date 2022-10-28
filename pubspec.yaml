@@ -39,6 +39,14 @@ dependencies:
   equatable: ^2.0.5
   google_fonts: ^3.0.1
 
+  # Firebase
+  firebase_core:
+  firebase_auth:
+  flutterfire_ui:
+  cloud_firestore:
+  provider: ^6.0.4
+  timeago: ^3.3.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

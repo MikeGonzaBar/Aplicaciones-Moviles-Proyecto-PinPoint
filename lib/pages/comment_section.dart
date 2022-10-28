@@ -5,7 +5,7 @@ import '../temp_data.dart' as temp_data;
 
 class CommentSection extends StatelessWidget {
   final postData;
-  CommentSection({super.key, required this.postData});
+  const CommentSection({super.key, required this.postData});
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +13,6 @@ class CommentSection extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Comentarios'),
-        backgroundColor: const Color(0xFF009fb7),
       ),
       body: SizedBox(
         width: MediaQuery.of(context).size.width,
