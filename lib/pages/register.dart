@@ -68,17 +68,18 @@ class _RegsiterPageState extends State<RegsiterPage> {
                       );
                     } else if (isValid ==
                         "The account already exists for that email.") {
-                      final snackBar = SnackBar(
-                        content: Text(isValid),
-                        action: SnackBarAction(
-                          label: 'Undo',
-                          onPressed: () {
-                            ScaffoldMessenger.of(context)
-                                .removeCurrentSnackBar();
-                          },
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(isValid),
+                          action: SnackBarAction(
+                            label: 'Undo',
+                            onPressed: () {
+                              ScaffoldMessenger.of(context)
+                                  .removeCurrentSnackBar();
+                            },
+                          ),
                         ),
                       );
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
                     } else {
                       final snackBar = SnackBar(
                         content: const Text('Please verify your information'),

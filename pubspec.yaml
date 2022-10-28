@@ -46,6 +46,7 @@ dependencies:
   cloud_firestore:
   provider: ^6.0.4
   timeago: ^3.3.0
+  geolocator:
 
 dev_dependencies:
   flutter_test:
