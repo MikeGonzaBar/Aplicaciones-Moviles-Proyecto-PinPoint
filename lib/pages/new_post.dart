@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:pinpoint/providers/posts_provider.dart';
@@ -142,7 +140,7 @@ class _NewPostState extends State<NewPost> {
                   if (daysActive == 0 || txtController.text == '') {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('Invalid post'),
+                        content: const Text('Invalid post'),
                         action: SnackBarAction(
                           label: 'Undo',
                           onPressed: () {
@@ -154,6 +152,22 @@ class _NewPostState extends State<NewPost> {
                     );
                   } else {
                     _publish();
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) => AlertDialog(
+                        title: const Text('New post created'),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, 'Cancel'),
+                            child: const Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, 'OK'),
+                            child: const Text('OK'),
+                          ),
+                        ],
+                      ),
+                    );
                   }
                 },
                 style: ElevatedButton.styleFrom(
@@ -171,22 +185,22 @@ class _NewPostState extends State<NewPost> {
   }
 
   Future<void> _publish() async {
-    print(txtController.text);
-    print(isAnon.toString());
-    print(daysActive.toString());
+    // print(txtController.text);
+    // print(isAnon.toString());
+    // print(daysActive.toString());
     LocationPermission permission = await Geolocator.checkPermission();
 
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        print('Location permissions are denied');
+        // print('Location permissions are denied');
       } else if (permission == LocationPermission.deniedForever) {
-        print("'Location permissions are permanently denied");
+        // print("'Location permissions are permanently denied");
       } else {
-        print("GPS Location service is granted");
+        // print("GPS Location service is granted");
       }
     } else {
-      print("GPS Location permission granted.");
+      // print("GPS Location permission granted.");
     }
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
@@ -197,7 +211,7 @@ class _NewPostState extends State<NewPost> {
       "daysActive": daysActive,
       "location": position,
     };
-    String response = await context.read<PostsProvider>().addNewPost(postObj);
-    print(response);
+    await context.read<PostsProvider>().addNewPost(postObj);
+    // print(response);
   }
 }

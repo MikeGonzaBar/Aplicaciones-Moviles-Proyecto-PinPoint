@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:pinpoint/pages/login.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:pinpoint/pages/main_page.dart';
+import 'package:pinpoint/providers/comments_provider.dart';
 import 'package:pinpoint/providers/posts_provider.dart';
 import 'package:pinpoint/providers/users_provider.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +21,9 @@ void main() async {
         ChangeNotifierProvider(
           create: (context) => PostsProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (context) => CommentsProvider(),
+        )
       ],
       child: const MyApp(),
     ),

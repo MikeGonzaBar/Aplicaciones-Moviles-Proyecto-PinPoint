@@ -13,7 +13,7 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  int _selectedIndex = 0;
+  int selectedIndex = 0;
   static const List<Widget> _widgetOptions = [
     Feed(), //INDEX 1
     NewPost(), //INDEX 2
@@ -22,7 +22,7 @@ class _MainPageState extends State<MainPage> {
 
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
+      selectedIndex = index;
     });
   }
 
@@ -36,16 +36,10 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     if (FirebaseAuth.instance.currentUser == null) {}
     return Scaffold(
-      appBar: AppBar(title: _appbarOptions.elementAt(_selectedIndex), actions: [
-        _selectedIndex == 0
-            ? IconButton(
-                icon: const Icon(Icons.replay_outlined),
-                tooltip: 'Refresh feed',
-                onPressed: () {
-                  print("BUTTON PRESSED REFRESH");
-                },
-              )
-            : _selectedIndex == 1
+      appBar: AppBar(title: _appbarOptions.elementAt(selectedIndex), actions: [
+        selectedIndex == 0
+            ? Container()
+            : selectedIndex == 1
                 ? Container()
                 : IconButton(
                     icon: const Icon(Icons.power_settings_new),
@@ -61,7 +55,7 @@ class _MainPageState extends State<MainPage> {
                   ),
       ]),
       body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
+        child: _widgetOptions.elementAt(selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const [
@@ -78,7 +72,7 @@ class _MainPageState extends State<MainPage> {
             label: "My Profile",
           ),
         ],
-        currentIndex: _selectedIndex,
+        currentIndex: selectedIndex,
         selectedItemColor: const Color(0xFF009fb7),
         onTap: _onItemTapped,
       ),

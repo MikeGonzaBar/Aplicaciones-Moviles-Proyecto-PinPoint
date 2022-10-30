@@ -59,8 +59,8 @@ class _RegsiterPageState extends State<RegsiterPage> {
                         pwdConfirmController.text);
                     setState(() {});
                     if (isValid == 'Created') {
-                      print("IsValidPWD");
-                      print(FirebaseAuth.instance.currentUser);
+                      // print("IsValidPWD");
+                      // print(FirebaseAuth.instance.currentUser);
                       Navigator.of(context).pushReplacement(
                         MaterialPageRoute(
                           builder: (context) => const MainPage(),
@@ -156,7 +156,7 @@ class _RegsiterPageState extends State<RegsiterPage> {
         email == '' ||
         password == '' ||
         confPassword == '') {
-      print('NOT VALID');
+      // print('NOT VALID');
       return "";
     }
     dynamic userObj = {'username': user, 'email': email, 'password': password};

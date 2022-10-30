@@ -49,8 +49,8 @@ class LoginPage extends StatelessWidget {
                 const Text("Register", style: TextStyle(color: Colors.white)),
           );
         },
-        providerConfigs: [
-          const EmailProviderConfiguration(),
+        providerConfigs: const [
+          EmailProviderConfiguration(),
         ],
         actions: [
           AuthStateChangeAction<SignedIn>(
