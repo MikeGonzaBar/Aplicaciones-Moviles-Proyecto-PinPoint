@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_share/flutter_share.dart';
 import 'package:flutterfire_ui/firestore.dart';
 import 'package:pinpoint/items/comment_item.dart';
 import 'package:pinpoint/providers/comments_provider.dart';
@@ -8,6 +9,7 @@ import 'package:pinpoint/providers/posts_provider.dart';
 import 'package:pinpoint/widgets/time_distance_text.dart';
 import 'package:provider/provider.dart';
 import '../items/end_of_scroll_item.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class CommentSection extends StatefulWidget {
   final dynamic postData;
@@ -91,11 +93,17 @@ class _CommentSectionState extends State<CommentSection> {
                                         flex: 5,
                                         child: TimeDistanceText(
                                             postObject: widget.postData)),
-                                    const Expanded(
+                                    Expanded(
                                       flex: 1,
-                                      child: Icon(
-                                        Icons.share,
-                                        size: 20,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          shareContent(
+                                              context, widget.postData);
+                                        },
+                                        child: const Icon(
+                                          Icons.share,
+                                          size: 20,
+                                        ),
                                       ),
                                     ),
                                     Expanded(
@@ -251,7 +259,7 @@ class _CommentSectionState extends State<CommentSection> {
     return votes.toString();
   }
 
-  void _downVote() async {
+  Future<void> _downVote() async {
     if (widget.postData["down_votes"]
         .contains(FirebaseAuth.instance.currentUser!.uid)) {
       await context.read<PostsProvider>().removeDownVotePost(widget.postData);
@@ -263,7 +271,7 @@ class _CommentSectionState extends State<CommentSection> {
     return;
   }
 
-  void _upVote() async {
+  Future<void> _upVote() async {
     if (widget.postData["up_votes"]
         .contains(FirebaseAuth.instance.currentUser!.uid)) {
       await context.read<PostsProvider>().removeUpVotePost(widget.postData);
@@ -286,5 +294,15 @@ class _CommentSectionState extends State<CommentSection> {
 
   Future<void> sendComment(text) async {
     context.read<CommentsProvider>().sendComment(widget.postData, text);
+  }
+
+  Future<void> shareContent(BuildContext context, postObject) async {
+    await FlutterShare.share(
+        title: 'Check this new PinPoint!',
+        text:
+            'From PinPoint: ${postObject["username"]} said this ${timeago.format(postObject["date"].toDate())}: ${postObject["text"]}',
+        chooserTitle: 'Share your PinPoint with anyone!');
+
+    return;
   }
 }
