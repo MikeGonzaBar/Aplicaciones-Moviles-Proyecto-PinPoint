@@ -4,6 +4,8 @@ import 'package:pinpoint/pages/comment_section.dart';
 import 'package:pinpoint/providers/posts_provider.dart';
 import 'package:pinpoint/widgets/time_distance_text.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_share/flutter_share.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class PostItem extends StatefulWidget {
   final dynamic postObject;
@@ -75,13 +77,19 @@ class _PostItemState extends State<PostItem> {
                 child: Row(
                   children: [
                     Expanded(
-                        flex: 5,
-                        child: TimeDistanceText(postObject: widget.postObject)),
-                    const Expanded(
+                      flex: 5,
+                      child: TimeDistanceText(postObject: widget.postObject),
+                    ),
+                    Expanded(
                       flex: 1,
-                      child: Icon(
-                        Icons.share,
-                        size: 20,
+                      child: GestureDetector(
+                        onTap: () {
+                          shareContent(context, widget.postObject);
+                        },
+                        child: const Icon(
+                          Icons.share,
+                          size: 20,
+                        ),
                       ),
                     ),
                     Expanded(
@@ -144,13 +152,13 @@ class _PostItemState extends State<PostItem> {
     );
   }
 
-  _getVotesNumber() {
+  String _getVotesNumber() {
     var votes = widget.postObject["up_votes"].length -
         widget.postObject["down_votes"].length;
     return votes.toString();
   }
 
-  _downVote() async {
+  Future<void> _downVote() async {
     if (widget.postObject["down_votes"]
         .contains(FirebaseAuth.instance.currentUser!.uid)) {
       await context.read<PostsProvider>().removeDownVotePost(widget.postObject);
@@ -162,7 +170,7 @@ class _PostItemState extends State<PostItem> {
     return;
   }
 
-  _upVote() async {
+  Future<void> _upVote() async {
     if (widget.postObject["up_votes"]
         .contains(FirebaseAuth.instance.currentUser!.uid)) {
       await context.read<PostsProvider>().removeUpVotePost(widget.postObject);
@@ -171,6 +179,16 @@ class _PostItemState extends State<PostItem> {
       await context.read<PostsProvider>().removeDownVotePost(widget.postObject);
       await context.read<PostsProvider>().upVotePost(widget.postObject);
     }
+    return;
+  }
+
+  Future<void> shareContent(BuildContext context, postObject) async {
+    await FlutterShare.share(
+        title: 'Check this new PinPoint!',
+        text:
+            'From PinPoint: ${postObject["username"]} said this ${timeago.format(widget.postObject["date"].toDate())}: ${postObject["text"]}',
+        chooserTitle: 'Share your PinPoint with anyone!');
+
     return;
   }
 }

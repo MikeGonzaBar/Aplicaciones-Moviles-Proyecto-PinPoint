@@ -87,13 +87,13 @@ class _CommentItemState extends State<CommentItem> {
     );
   }
 
-  _getVotesNumber() {
+  String _getVotesNumber() {
     var votes = widget.commentData["up_votes"].length -
         widget.commentData["down_votes"].length;
     return votes.toString();
   }
 
-  _downVote() async {
+  Future<void> _downVote() async {
     if (widget.commentData["down_votes"]
         .contains(FirebaseAuth.instance.currentUser!.uid)) {
       await context

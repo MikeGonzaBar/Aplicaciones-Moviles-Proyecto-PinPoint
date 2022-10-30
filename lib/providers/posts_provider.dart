@@ -42,7 +42,7 @@ class PostsProvider with ChangeNotifier {
   }
   void getMyPosts(dynamic userObj) async {}
 
-  downVotePost(postObject) async {
+  Future<void> downVotePost(postObject) async {
     // print(postObject["post_id"]);
     // print(postObject["down_votes"]);
     List<dynamic> downVotes = postObject["down_votes"];
@@ -57,7 +57,7 @@ class PostsProvider with ChangeNotifier {
     return;
   }
 
-  upVotePost(postObject) async {
+  Future<void> upVotePost(postObject) async {
     // print(postObject["post_id"]);
     // print(postObject["up_votes"]);
     List<dynamic> upVotes = postObject["up_votes"];

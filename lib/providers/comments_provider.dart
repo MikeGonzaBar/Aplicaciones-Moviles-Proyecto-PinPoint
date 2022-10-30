@@ -6,7 +6,7 @@ class CommentsProvider with ChangeNotifier {
   final List<dynamic> _commentsList = [];
   dynamic get getCommentsList => _commentsList;
 
-  void sendComment(postObj, comment) async {
+  Future<void> sendComment(postObj, comment) async {
     // print(postObj["post_id"]);
     var commentId =
         await FirebaseFirestore.instance.collection('pinpoint_comments').add(
@@ -30,7 +30,7 @@ class CommentsProvider with ChangeNotifier {
     return;
   }
 
-  downVoteComment(commentObject) async {
+  Future<void> downVoteComment(commentObject) async {
     // print(commentObject["comment_id"]);
     // print(commentObject["down_votes"]);
     List<dynamic> downVotes = commentObject["down_votes"];
@@ -45,7 +45,7 @@ class CommentsProvider with ChangeNotifier {
     return;
   }
 
-  upVoteComment(commentObject) async {
+  Future<void> upVoteComment(commentObject) async {
     // print(commentObject["comment_id"]);
     // print(commentObject["up_votes"]);
     List<dynamic> upVotes = commentObject["up_votes"];
