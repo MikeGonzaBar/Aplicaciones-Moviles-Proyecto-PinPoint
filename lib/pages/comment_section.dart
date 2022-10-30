@@ -1,19 +1,29 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutterfire_ui/firestore.dart';
 import 'package:pinpoint/items/comment_item.dart';
+import 'package:pinpoint/providers/comments_provider.dart';
+import 'package:pinpoint/providers/posts_provider.dart';
+import 'package:pinpoint/widgets/time_distance_text.dart';
+import 'package:provider/provider.dart';
 import '../items/end_of_scroll_item.dart';
-import '../temp_data.dart' as temp_data;
 
-class CommentSection extends StatelessWidget {
-  final postData;
-  CommentSection({super.key, required this.postData});
+class CommentSection extends StatefulWidget {
+  final dynamic postData;
+  const CommentSection({super.key, required this.postData});
 
+  @override
+  State<CommentSection> createState() => _CommentSectionState();
+}
+
+class _CommentSectionState extends State<CommentSection> {
   @override
   Widget build(BuildContext context) {
     final commentController = TextEditingController();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Comentarios'),
-        backgroundColor: const Color(0xFF009fb7),
       ),
       body: SizedBox(
         width: MediaQuery.of(context).size.width,
@@ -31,22 +41,22 @@ class CommentSection extends StatelessWidget {
                       children: [
                         // POST CONTAINER
                         Container(
-                          padding: EdgeInsets.all(18),
                           decoration: BoxDecoration(
-                            color: Color(0xffe8eaed),
+                            color: const Color(0xffe8eaed),
                             borderRadius: BorderRadius.circular(15),
                           ),
+                          padding: const EdgeInsets.all(18),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               // MAIN TEXT
                               Text(
-                                postData["text"],
+                                widget.postData["text"],
                                 style: const TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 18),
                               ),
                               // IMAGE
-                              if (postData["image"] != "")
+                              if (widget.postData["image"] != "")
                                 Padding(
                                   padding: const EdgeInsets.only(top: 10),
                                   child: Center(
@@ -56,7 +66,8 @@ class CommentSection extends StatelessWidget {
                                         width:
                                             MediaQuery.of(context).size.width *
                                                 0.75,
-                                        image: AssetImage(postData["image"]),
+                                        image: AssetImage(
+                                            widget.postData["image"]),
                                       ),
                                     ),
                                   ),
@@ -65,7 +76,7 @@ class CommentSection extends StatelessWidget {
                               Padding(
                                 padding: const EdgeInsets.only(top: 6),
                                 child: Text(
-                                  "${postData["anonymous"] ? "Anónimo" : postData["author"]}",
+                                  "${widget.postData["is_anonymous"] ? "Anónimo" : widget.postData["username"]}",
                                   style: const TextStyle(
                                       fontWeight: FontWeight.w500),
                                   textAlign: TextAlign.start,
@@ -77,14 +88,10 @@ class CommentSection extends StatelessWidget {
                                 child: Row(
                                   children: [
                                     Expanded(
-                                      flex: 5,
-                                      child: Text(
-                                        "📍${postData["closeness"]} • ${postData["timestamp"]}",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                    ),
-                                    Expanded(
+                                        flex: 5,
+                                        child: TimeDistanceText(
+                                            postObject: widget.postData)),
+                                    const Expanded(
                                       flex: 1,
                                       child: Icon(
                                         Icons.share,
@@ -97,11 +104,15 @@ class CommentSection extends StatelessWidget {
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceEvenly,
                                         children: [
-                                          Icon(
+                                          const Icon(
                                             Icons.comment_outlined,
                                             size: 20,
                                           ),
-                                          Text("${postData["commentsNumber"]}"),
+                                          Text(
+                                            "${widget.postData["comments_number"]}",
+                                            style:
+                                                const TextStyle(fontSize: 20),
+                                          ),
                                         ],
                                       ),
                                     ),
@@ -111,20 +122,40 @@ class CommentSection extends StatelessWidget {
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceEvenly,
                                         children: [
-                                          Icon(
-                                            (Icons.keyboard_arrow_down_rounded),
-                                            size: 20,
-                                            color: postData["myVote"] == "down"
-                                                ? Color(0xFFFF7A06)
-                                                : Colors.black,
+                                          GestureDetector(
+                                            onTap: _downVote,
+                                            child: Icon(
+                                              (Icons
+                                                  .keyboard_arrow_down_rounded),
+                                              size: 30,
+                                              color: widget
+                                                      .postData["down_votes"]
+                                                      .contains(FirebaseAuth
+                                                          .instance
+                                                          .currentUser!
+                                                          .uid)
+                                                  ? const Color(0xFFFF7A06)
+                                                  : Colors.black,
+                                            ),
                                           ),
-                                          Text("${postData["votes"]}"),
-                                          Icon(
-                                            (Icons.keyboard_arrow_up_rounded),
-                                            size: 20,
-                                            color: postData["myVote"] == "up"
-                                                ? Color(0xFFFF7A06)
-                                                : Colors.black,
+                                          Text(
+                                            _getVotesNumber(),
+                                            style:
+                                                const TextStyle(fontSize: 20),
+                                          ),
+                                          GestureDetector(
+                                            onTap: _upVote,
+                                            child: Icon(
+                                              (Icons.keyboard_arrow_up_rounded),
+                                              size: 30,
+                                              color: widget.postData["up_votes"]
+                                                      .contains(FirebaseAuth
+                                                          .instance
+                                                          .currentUser!
+                                                          .uid)
+                                                  ? const Color(0xFFFF7A06)
+                                                  : Colors.black,
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -136,23 +167,39 @@ class CommentSection extends StatelessWidget {
                           ),
                         ),
                         // COMMENT TEXT DIVIDER
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
+                        const Padding(
+                          padding: EdgeInsets.all(8.0),
                           child: Text("Comentarios:"),
                         ),
                         // COMMENT CONTAINER
-                        ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: temp_data.comments.length + 1,
-                          itemBuilder: (BuildContext context, int index) {
-                            if (index != temp_data.comments.length) {
-                              return CommentItem(
-                                  commentData: temp_data.comments[index]);
-                            } else {
-                              // If index is last, add ending dot
-                              return EndOfScrollItem();
+                        FirestoreQueryBuilder<dynamic>(
+                          pageSize: 100,
+                          query: FirebaseFirestore.instance
+                              .collection("pinpoint_comments")
+                              .where('post_id',
+                                  isEqualTo: widget.postData['post_id']),
+                          builder: (context, snapshot, _) {
+                            if (snapshot.isFetching) {
+                              return const CircularProgressIndicator();
                             }
+                            if (snapshot.hasError) {
+                              return Text('error ${snapshot.error}');
+                            }
+
+                            return ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: snapshot.docs.length + 1,
+                              itemBuilder: (BuildContext context, int index) {
+                                if (index != snapshot.docs.length) {
+                                  return CommentItem(
+                                      commentData: snapshot.docs[index]);
+                                } else {
+                                  // If index is last, add ending dot
+                                  return const EndOfScrollItem();
+                                }
+                              },
+                            );
                           },
                         ),
                       ],
@@ -167,7 +214,7 @@ class CommentSection extends StatelessWidget {
               left: 20,
               right: 20,
               child: Center(
-                child: Container(
+                child: SizedBox(
                   // color: Colors.red,
                   width: MediaQuery.of(context).size.width,
                   height: 50,
@@ -182,7 +229,9 @@ class CommentSection extends StatelessWidget {
                       border: const OutlineInputBorder(),
                       suffixIcon: IconButton(
                         icon: const Icon(Icons.send),
-                        onPressed: () {},
+                        onPressed: () {
+                          sendComment(commentController.text);
+                        },
                       ),
                       // focusedBorder: OutlineInputBorder(),
                     ),
@@ -194,5 +243,48 @@ class CommentSection extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _getVotesNumber() {
+    var votes = widget.postData["up_votes"].length -
+        widget.postData["down_votes"].length;
+    return votes.toString();
+  }
+
+  void _downVote() async {
+    if (widget.postData["down_votes"]
+        .contains(FirebaseAuth.instance.currentUser!.uid)) {
+      await context.read<PostsProvider>().removeDownVotePost(widget.postData);
+    } else {
+      // print('IN ELSE, NOT DOWNVOTED');
+      await context.read<PostsProvider>().removeUpVotePost(widget.postData);
+      await context.read<PostsProvider>().downVotePost(widget.postData);
+    }
+    return;
+  }
+
+  void _upVote() async {
+    if (widget.postData["up_votes"]
+        .contains(FirebaseAuth.instance.currentUser!.uid)) {
+      await context.read<PostsProvider>().removeUpVotePost(widget.postData);
+    } else {
+      // print('IN ELSE, NOT upVOTED');
+      await context.read<PostsProvider>().removeDownVotePost(widget.postData);
+      await context.read<PostsProvider>().upVotePost(widget.postData);
+    }
+    var docs = await FirebaseFirestore.instance
+        .collection("pinpoint_comments")
+        .where('post_id', isEqualTo: widget.postData['post_id'])
+        // .orderBy('date', descending: true)
+        .get();
+    // print(widget.postData['post_id']);
+    // print((docs.toString()));
+    // print((docs.docs));
+
+    return;
+  }
+
+  Future<void> sendComment(text) async {
+    context.read<CommentsProvider>().sendComment(widget.postData, text);
   }
 }

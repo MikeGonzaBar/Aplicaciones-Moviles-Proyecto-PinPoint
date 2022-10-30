@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:pinpoint/providers/posts_provider.dart';
+import 'package:provider/provider.dart';
 
 class NewPost extends StatefulWidget {
   const NewPost({super.key});
@@ -133,7 +136,40 @@ class _NewPostState extends State<NewPost> {
             Align(
               alignment: Alignment.bottomRight,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  if (daysActive == 0 || txtController.text == '') {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: const Text('Invalid post'),
+                        action: SnackBarAction(
+                          label: 'Undo',
+                          onPressed: () {
+                            ScaffoldMessenger.of(context)
+                                .removeCurrentSnackBar();
+                          },
+                        ),
+                      ),
+                    );
+                  } else {
+                    _publish();
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) => AlertDialog(
+                        title: const Text('New post created'),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, 'Cancel'),
+                            child: const Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, 'OK'),
+                            child: const Text('OK'),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                },
                 style: ElevatedButton.styleFrom(
                   fixedSize: const Size(100, 50),
                   shape: RoundedRectangleBorder(
@@ -146,5 +182,36 @@ class _NewPostState extends State<NewPost> {
             ),
           ],
         ));
+  }
+
+  Future<void> _publish() async {
+    // print(txtController.text);
+    // print(isAnon.toString());
+    // print(daysActive.toString());
+    LocationPermission permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // print('Location permissions are denied');
+      } else if (permission == LocationPermission.deniedForever) {
+        // print("'Location permissions are permanently denied");
+      } else {
+        // print("GPS Location service is granted");
+      }
+    } else {
+      // print("GPS Location permission granted.");
+    }
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+
+    dynamic postObj = {
+      "text": txtController.text,
+      "isAnon": isAnon,
+      "daysActive": daysActive,
+      "location": position,
+    };
+    await context.read<PostsProvider>().addNewPost(postObj);
+    // print(response);
   }
 }

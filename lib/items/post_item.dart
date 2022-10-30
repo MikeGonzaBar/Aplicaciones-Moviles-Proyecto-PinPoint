@@ -1,38 +1,53 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pinpoint/pages/comment_section.dart';
+import 'package:pinpoint/providers/posts_provider.dart';
+import 'package:pinpoint/widgets/time_distance_text.dart';
+import 'package:provider/provider.dart';
 
-class PostItem extends StatelessWidget {
-  final postObject;
-  const PostItem({super.key, required this.postObject});
+class PostItem extends StatefulWidget {
+  final dynamic postObject;
+  final bool isInComment;
+  const PostItem(
+      {super.key, required this.postObject, required this.isInComment});
 
+  @override
+  State<PostItem> createState() => _PostItemState();
+}
+
+class _PostItemState extends State<PostItem> {
+  var distance = 'Calculating...';
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: (() {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-              builder: (context) => CommentSection(postData: postObject)),
-        );
+        if (!widget.isInComment) {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+                builder: (context) =>
+                    CommentSection(postData: widget.postObject)),
+          );
+        }
       }),
       child: Padding(
         padding: const EdgeInsets.only(top: 12.0, left: 12.0, right: 12.0),
         child: Container(
           decoration: BoxDecoration(
-            color: Color(0xffe8eaed),
+            color: const Color(0xffe8eaed),
             borderRadius: BorderRadius.circular(15),
           ),
-          padding: EdgeInsets.all(18),
+          padding: const EdgeInsets.all(18),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // MAIN TEXT
               Text(
-                postObject["text"],
+                widget.postObject["text"],
                 style:
                     const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               ),
               // IMAGE
-              if (postObject["image"] != "")
+              if (widget.postObject["image"] != "")
                 Padding(
                   padding: const EdgeInsets.only(top: 10),
                   child: Center(
@@ -40,7 +55,7 @@ class PostItem extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16),
                       child: Image(
                         width: MediaQuery.of(context).size.width * 0.75,
-                        image: AssetImage(postObject["image"]),
+                        image: AssetImage(widget.postObject["image"]),
                       ),
                     ),
                   ),
@@ -49,7 +64,7 @@ class PostItem extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(top: 6),
                 child: Text(
-                  "${postObject["anonymous"] ? "Anónimo" : postObject["author"]}",
+                  "${widget.postObject["is_anonymous"] ? "Anónimo" : widget.postObject["username"]}",
                   style: const TextStyle(fontWeight: FontWeight.w500),
                   textAlign: TextAlign.start,
                 ),
@@ -60,13 +75,9 @@ class PostItem extends StatelessWidget {
                 child: Row(
                   children: [
                     Expanded(
-                      flex: 5,
-                      child: Text(
-                        "📍${postObject["closeness"]} • ${postObject["timestamp"]}",
-                        style: TextStyle(fontWeight: FontWeight.w600),
-                      ),
-                    ),
-                    Expanded(
+                        flex: 5,
+                        child: TimeDistanceText(postObject: widget.postObject)),
+                    const Expanded(
                       flex: 1,
                       child: Icon(
                         Icons.share,
@@ -78,11 +89,14 @@ class PostItem extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.comment_outlined,
                             size: 20,
                           ),
-                          Text("${postObject["commentsNumber"]}"),
+                          Text(
+                            "${widget.postObject["comments_number"]}",
+                            style: const TextStyle(fontSize: 20),
+                          ),
                         ],
                       ),
                     ),
@@ -91,20 +105,31 @@ class PostItem extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Icon(
-                            (Icons.keyboard_arrow_down_rounded),
-                            size: 20,
-                            color: postObject["myVote"] == "down"
-                                ? Color(0xFFFF7A06)
-                                : Colors.black,
+                          GestureDetector(
+                            onTap: _downVote,
+                            child: Icon(
+                              (Icons.keyboard_arrow_down_rounded),
+                              size: 30,
+                              color: widget.postObject["down_votes"].contains(
+                                      FirebaseAuth.instance.currentUser!.uid)
+                                  ? const Color(0xFFFF7A06)
+                                  : Colors.black,
+                            ),
                           ),
-                          Text("${postObject["votes"]}"),
-                          Icon(
-                            (Icons.keyboard_arrow_up_rounded),
-                            size: 20,
-                            color: postObject["myVote"] == "up"
-                                ? Color(0xFFFF7A06)
-                                : Colors.black,
+                          Text(
+                            "${_getVotesNumber()}",
+                            style: const TextStyle(fontSize: 20),
+                          ),
+                          GestureDetector(
+                            onTap: _upVote,
+                            child: Icon(
+                              (Icons.keyboard_arrow_up_rounded),
+                              size: 30,
+                              color: widget.postObject["up_votes"].contains(
+                                      FirebaseAuth.instance.currentUser!.uid)
+                                  ? const Color(0xFFFF7A06)
+                                  : Colors.black,
+                            ),
                           ),
                         ],
                       ),
@@ -117,5 +142,35 @@ class PostItem extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  _getVotesNumber() {
+    var votes = widget.postObject["up_votes"].length -
+        widget.postObject["down_votes"].length;
+    return votes.toString();
+  }
+
+  _downVote() async {
+    if (widget.postObject["down_votes"]
+        .contains(FirebaseAuth.instance.currentUser!.uid)) {
+      await context.read<PostsProvider>().removeDownVotePost(widget.postObject);
+    } else {
+      // print('IN ELSE, NOT DOWNVOTED');
+      await context.read<PostsProvider>().removeUpVotePost(widget.postObject);
+      await context.read<PostsProvider>().downVotePost(widget.postObject);
+    }
+    return;
+  }
+
+  _upVote() async {
+    if (widget.postObject["up_votes"]
+        .contains(FirebaseAuth.instance.currentUser!.uid)) {
+      await context.read<PostsProvider>().removeUpVotePost(widget.postObject);
+    } else {
+      // print('IN ELSE, NOT upVOTED');
+      await context.read<PostsProvider>().removeDownVotePost(widget.postObject);
+      await context.read<PostsProvider>().upVotePost(widget.postObject);
+    }
+    return;
   }
 }

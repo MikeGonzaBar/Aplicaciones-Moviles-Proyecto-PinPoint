@@ -1,7 +1,7 @@
-import 'dart:developer';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pinpoint/pages/feed.dart';
+import 'package:pinpoint/pages/login.dart';
 import 'package:pinpoint/pages/my_posts.dart';
 import 'package:pinpoint/pages/new_post.dart';
 
@@ -13,9 +13,7 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  int _selectedIndex = 0;
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+  int selectedIndex = 0;
   static const List<Widget> _widgetOptions = [
     Feed(), //INDEX 1
     NewPost(), //INDEX 2
@@ -23,27 +21,41 @@ class _MainPageState extends State<MainPage> {
   ];
 
   void _onItemTapped(int index) {
-    print("Datetime now: ${DateTime.now()}");
     setState(() {
-      _selectedIndex = index;
+      selectedIndex = index;
     });
   }
 
   static const List<Widget> _appbarOptions = [
     Text("PinPoint"),
     Text("New PinPoint"),
-    Text("My Pinpoints")
+    Text("My Profile")
   ];
 
   @override
   Widget build(BuildContext context) {
+    if (FirebaseAuth.instance.currentUser == null) {}
     return Scaffold(
-      appBar: AppBar(
-        title: _appbarOptions.elementAt(_selectedIndex),
-        backgroundColor: const Color(0xFF009fb7),
-      ),
+      appBar: AppBar(title: _appbarOptions.elementAt(selectedIndex), actions: [
+        selectedIndex == 0
+            ? Container()
+            : selectedIndex == 1
+                ? Container()
+                : IconButton(
+                    icon: const Icon(Icons.power_settings_new),
+                    tooltip: 'Logout',
+                    onPressed: () async {
+                      await FirebaseAuth.instance.signOut();
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (context) => const LoginPage(),
+                        ),
+                      );
+                    },
+                  ),
+      ]),
       body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
+        child: _widgetOptions.elementAt(selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const [
@@ -57,10 +69,10 @@ class _MainPageState extends State<MainPage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person_outline),
-            label: "My Posts",
+            label: "My Profile",
           ),
         ],
-        currentIndex: _selectedIndex,
+        currentIndex: selectedIndex,
         selectedItemColor: const Color(0xFF009fb7),
         onTap: _onItemTapped,
       ),

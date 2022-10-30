@@ -1,15 +1,26 @@
+import 'dart:developer';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pinpoint/pages/main_page.dart';
+import 'package:pinpoint/providers/users_provider.dart';
+import 'package:provider/provider.dart';
 
-class RegsiterPage extends StatelessWidget {
+class RegsiterPage extends StatefulWidget {
   const RegsiterPage({super.key});
 
+  @override
+  State<RegsiterPage> createState() => _RegsiterPageState();
+}
+
+class _RegsiterPageState extends State<RegsiterPage> {
   @override
   Widget build(BuildContext context) {
     final usrController = TextEditingController();
     final emailController = TextEditingController();
     final pwdController = TextEditingController();
     final pwdConfirmController = TextEditingController();
+    String isValid = "";
     return Scaffold(
       appBar: AppBar(
         title: const Text('Register to PinPoint'),
@@ -40,18 +51,52 @@ class RegsiterPage extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: MaterialButton(
-                  onPressed: () {
-                    Navigator.of(context)
-                      ..pop()
-                      ..push(
+                  onPressed: () async {
+                    isValid = await _register(
+                        usrController.text,
+                        emailController.text,
+                        pwdController.text,
+                        pwdConfirmController.text);
+                    setState(() {});
+                    if (isValid == 'Created') {
+                      // print("IsValidPWD");
+                      // print(FirebaseAuth.instance.currentUser);
+                      Navigator.of(context).pushReplacement(
                         MaterialPageRoute(
                           builder: (context) => const MainPage(),
                         ),
                       );
+                    } else if (isValid ==
+                        "The account already exists for that email.") {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(isValid),
+                          action: SnackBarAction(
+                            label: 'Undo',
+                            onPressed: () {
+                              ScaffoldMessenger.of(context)
+                                  .removeCurrentSnackBar();
+                            },
+                          ),
+                        ),
+                      );
+                    } else {
+                      final snackBar = SnackBar(
+                        content: const Text('Please verify your information'),
+                        action: SnackBarAction(
+                          label: 'Undo',
+                          onPressed: () {
+                            ScaffoldMessenger.of(context)
+                                .removeCurrentSnackBar();
+                          },
+                        ),
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    }
                   },
                   color: const Color(0xFF009fb7),
                   minWidth: (MediaQuery.of(context).size.width / 8) * 7,
-                  child: const Text("REGISTER & LOGIN",
+                  child: const Text("Register",
                       style: TextStyle(color: Colors.white)),
                 ),
               ),
@@ -102,5 +147,27 @@ class RegsiterPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<String> _register(user, email, password, confPassword) async {
+    log('VERIFYING DATA');
+    if (password != confPassword ||
+        user == '' ||
+        email == '' ||
+        password == '' ||
+        confPassword == '') {
+      // print('NOT VALID');
+      return "";
+    }
+    dynamic userObj = {'username': user, 'email': email, 'password': password};
+    log('OBJECT CREATED');
+    log(userObj.toString());
+    String response =
+        await context.read<UsersProvider>().registerNewUser(userObj);
+    log(response);
+    if (response == 'Created') {
+      await context.read<UsersProvider>().signInUser(userObj);
+    }
+    return response;
   }
 }
