@@ -14,6 +14,13 @@ class UsersProvider with ChangeNotifier {
               email: userObj["email"], password: userObj["password"]);
       // log('USER REGISTERED');
       // log(cred.toString());
+      if (response == '') {
+        FirebaseAuth.instance.currentUser!
+            .updateDisplayName(userObj["username"]);
+        response = 'Created';
+      }
+
+      notifyListeners();
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
         response = 'The account already exists for that email.';
@@ -22,13 +29,8 @@ class UsersProvider with ChangeNotifier {
       }
     } catch (e) {
       // print(e);
+      response = e.toString();
     }
-    if (response == '') {
-      FirebaseAuth.instance.currentUser!.updateDisplayName(userObj["username"]);
-      response = 'Created';
-    }
-
-    notifyListeners();
     return response;
   }
 

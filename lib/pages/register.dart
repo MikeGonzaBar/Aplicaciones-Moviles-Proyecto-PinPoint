@@ -13,13 +13,14 @@ class RegsiterPage extends StatefulWidget {
   State<RegsiterPage> createState() => _RegsiterPageState();
 }
 
+final usrController = TextEditingController();
+final emailController = TextEditingController();
+final pwdController = TextEditingController();
+final pwdConfirmController = TextEditingController();
+
 class _RegsiterPageState extends State<RegsiterPage> {
   @override
   Widget build(BuildContext context) {
-    final usrController = TextEditingController();
-    final emailController = TextEditingController();
-    final pwdController = TextEditingController();
-    final pwdConfirmController = TextEditingController();
     String isValid = "";
     return Scaffold(
       appBar: AppBar(
