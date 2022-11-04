@@ -1,6 +1,7 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:developer';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pinpoint/pages/main_page.dart';
 import 'package:pinpoint/providers/users_provider.dart';
@@ -60,8 +61,6 @@ class _RegsiterPageState extends State<RegsiterPage> {
                         pwdConfirmController.text);
                     setState(() {});
                     if (isValid == 'Created') {
-                      // print("IsValidPWD");
-                      // print(FirebaseAuth.instance.currentUser);
                       Navigator.of(context).pushReplacement(
                         MaterialPageRoute(
                           builder: (context) => const MainPage(),
@@ -73,7 +72,7 @@ class _RegsiterPageState extends State<RegsiterPage> {
                         SnackBar(
                           content: Text(isValid),
                           action: SnackBarAction(
-                            label: 'Undo',
+                            label: 'Ok',
                             onPressed: () {
                               ScaffoldMessenger.of(context)
                                   .removeCurrentSnackBar();
@@ -82,17 +81,16 @@ class _RegsiterPageState extends State<RegsiterPage> {
                         ),
                       );
                     } else {
-                      final snackBar = SnackBar(
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                         content: const Text('Please verify your information'),
                         action: SnackBarAction(
-                          label: 'Undo',
+                          label: 'Ok',
                           onPressed: () {
                             ScaffoldMessenger.of(context)
                                 .removeCurrentSnackBar();
                           },
                         ),
-                      );
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      ));
                     }
                   },
                   color: const Color(0xFF009fb7),
@@ -157,7 +155,6 @@ class _RegsiterPageState extends State<RegsiterPage> {
         email == '' ||
         password == '' ||
         confPassword == '') {
-      // print('NOT VALID');
       return "";
     }
     dynamic userObj = {'username': user, 'email': email, 'password': password};

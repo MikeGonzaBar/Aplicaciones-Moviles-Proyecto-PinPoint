@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterfire_ui/firestore.dart';
 import 'package:pinpoint/items/post_item.dart';
+import 'package:pinpoint/providers/posts_provider.dart';
+import 'package:provider/provider.dart';
 import '../items/end_of_scroll_item.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -10,7 +12,6 @@ class MyPosts extends StatelessWidget {
   const MyPosts({super.key});
   @override
   Widget build(BuildContext context) {
-    // padding: EdgeInsets.fromLTRB(8, 8, 8, 0),
     return SingleChildScrollView(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -41,6 +42,11 @@ class MyPosts extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                 ),
+                ElevatedButton(
+                    onPressed: () {
+                      context.read<PostsProvider>().getMyUserVoteQuantity();
+                    },
+                    child: const Text("Log vote number")),
                 const Padding(
                   padding: EdgeInsets.only(top: 16.0),
                   child: Text(
@@ -67,24 +73,24 @@ class MyPosts extends StatelessWidget {
               }
               if (snapshot.hasError) {
                 return Text('error ${snapshot.error}');
+              } else {
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: snapshot.docs.length + 1,
+                  itemBuilder: (BuildContext context, int index) {
+                    if (index != snapshot.docs.length) {
+                      return PostItem(
+                        postObject: snapshot.docs[index],
+                        isInComment: false,
+                      );
+                    } else {
+                      // If index is last, add ending dot
+                      return const EndOfScrollItem();
+                    }
+                  },
+                );
               }
-
-              return ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: snapshot.docs.length + 1,
-                itemBuilder: (BuildContext context, int index) {
-                  if (index != snapshot.docs.length) {
-                    return PostItem(
-                      postObject: snapshot.docs[index],
-                      isInComment: false,
-                    );
-                  } else {
-                    // If index is last, add ending dot
-                    return const EndOfScrollItem();
-                  }
-                },
-              );
             },
           ),
         ],

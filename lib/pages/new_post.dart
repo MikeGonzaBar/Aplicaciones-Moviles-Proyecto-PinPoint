@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:pinpoint/providers/posts_provider.dart';
@@ -11,7 +13,7 @@ class NewPost extends StatefulWidget {
 }
 
 class _NewPostState extends State<NewPost> {
-  final txtController = TextEditingController();
+  final postTxtController = TextEditingController();
   bool isAnon = false;
   int daysActive = 0;
   @override
@@ -31,7 +33,7 @@ class _NewPostState extends State<NewPost> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   TextField(
-                    controller: txtController,
+                    controller: postTxtController,
                     maxLines: 3,
                     style: const TextStyle(fontWeight: FontWeight.w600),
                     cursorColor: const Color(0xFF009fb7),
@@ -137,12 +139,14 @@ class _NewPostState extends State<NewPost> {
               alignment: Alignment.bottomRight,
               child: ElevatedButton(
                 onPressed: () {
-                  if (daysActive == 0 || txtController.text == '') {
+                  // Validate input
+                  if (daysActive == 0 || postTxtController.text == '') {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: const Text('Invalid post'),
+                        content: const Text(
+                            'All posts need a message and time limit.'),
                         action: SnackBarAction(
-                          label: 'Undo',
+                          label: 'Ok',
                           onPressed: () {
                             ScaffoldMessenger.of(context)
                                 .removeCurrentSnackBar();
@@ -152,22 +156,6 @@ class _NewPostState extends State<NewPost> {
                     );
                   } else {
                     _publish();
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) => AlertDialog(
-                        title: const Text('New post created'),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () => Navigator.pop(context, 'Cancel'),
-                            child: const Text('Cancel'),
-                          ),
-                          TextButton(
-                            onPressed: () => Navigator.pop(context, 'OK'),
-                            child: const Text('OK'),
-                          ),
-                        ],
-                      ),
-                    );
                   }
                 },
                 style: ElevatedButton.styleFrom(
@@ -185,33 +173,53 @@ class _NewPostState extends State<NewPost> {
   }
 
   Future<void> _publish() async {
-    // print(txtController.text);
-    // print(isAnon.toString());
-    // print(daysActive.toString());
     LocationPermission permission = await Geolocator.checkPermission();
 
-    if (permission == LocationPermission.denied) {
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
       permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        // print('Location permissions are denied');
-      } else if (permission == LocationPermission.deniedForever) {
-        // print("'Location permissions are permanently denied");
-      } else {
-        // print("GPS Location service is granted");
-      }
-    } else {
-      // print("GPS Location permission granted.");
     }
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
 
     dynamic postObj = {
-      "text": txtController.text,
+      "text": postTxtController.text,
       "isAnon": isAnon,
       "daysActive": daysActive,
       "location": position,
     };
-    await context.read<PostsProvider>().addNewPost(postObj);
-    // print(response);
+    if (await context.read<PostsProvider>().addNewPost(postObj) == true) {
+      // If post submission was successful
+      showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text('New post created!'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, 'OK');
+                // Return to Feed
+                postTxtController.clear();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    } else {
+      // If post submission was not successful
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+              'There was an issue sending your post. Please try again.'),
+          action: SnackBarAction(
+            label: 'Ok',
+            onPressed: () {
+              ScaffoldMessenger.of(context).removeCurrentSnackBar();
+            },
+          ),
+        ),
+      );
+    }
   }
 }

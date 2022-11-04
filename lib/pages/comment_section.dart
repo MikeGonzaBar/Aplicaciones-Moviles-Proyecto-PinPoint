@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -19,10 +21,11 @@ class CommentSection extends StatefulWidget {
   State<CommentSection> createState() => _CommentSectionState();
 }
 
+final commentController = TextEditingController();
+
 class _CommentSectionState extends State<CommentSection> {
   @override
   Widget build(BuildContext context) {
-    final commentController = TextEditingController();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Comentarios'),
@@ -228,6 +231,7 @@ class _CommentSectionState extends State<CommentSection> {
                   height: 50,
                   child: TextField(
                     controller: commentController,
+                    textCapitalization: TextCapitalization.sentences,
                     decoration: InputDecoration(
                       hintText: "Comment something...",
                       // label: Text("Hello"),
@@ -264,7 +268,6 @@ class _CommentSectionState extends State<CommentSection> {
         .contains(FirebaseAuth.instance.currentUser!.uid)) {
       await context.read<PostsProvider>().removeDownVotePost(widget.postData);
     } else {
-      // print('IN ELSE, NOT DOWNVOTED');
       await context.read<PostsProvider>().removeUpVotePost(widget.postData);
       await context.read<PostsProvider>().downVotePost(widget.postData);
     }
@@ -276,24 +279,32 @@ class _CommentSectionState extends State<CommentSection> {
         .contains(FirebaseAuth.instance.currentUser!.uid)) {
       await context.read<PostsProvider>().removeUpVotePost(widget.postData);
     } else {
-      // print('IN ELSE, NOT upVOTED');
       await context.read<PostsProvider>().removeDownVotePost(widget.postData);
       await context.read<PostsProvider>().upVotePost(widget.postData);
     }
-    var docs = await FirebaseFirestore.instance
-        .collection("pinpoint_comments")
-        .where('post_id', isEqualTo: widget.postData['post_id'])
-        // .orderBy('date', descending: true)
-        .get();
-    // print(widget.postData['post_id']);
-    // print((docs.toString()));
-    // print((docs.docs));
-
     return;
   }
 
   Future<void> sendComment(text) async {
-    context.read<CommentsProvider>().sendComment(widget.postData, text);
+    if (await context
+            .read<CommentsProvider>()
+            .sendComment(widget.postData, text) ==
+        true) {
+      commentController.clear();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+              'There was an issue sending your comment. Please try again.'),
+          action: SnackBarAction(
+            label: 'Ok',
+            onPressed: () {
+              ScaffoldMessenger.of(context).removeCurrentSnackBar();
+            },
+          ),
+        ),
+      );
+    }
   }
 
   Future<void> shareContent(BuildContext context, postObject) async {
