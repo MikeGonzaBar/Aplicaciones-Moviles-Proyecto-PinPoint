@@ -30,8 +30,14 @@ class _TimeDistanceTextState extends State<TimeDistanceText> {
   }
 
   Future<String> _getProximity() async {
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      permission = await Geolocator.requestPermission();
+    }
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
+
     var distanceInMeters = Geolocator.distanceBetween(
       position.latitude,
       position.longitude,
