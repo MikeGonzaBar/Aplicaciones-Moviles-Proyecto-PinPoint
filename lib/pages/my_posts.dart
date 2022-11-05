@@ -3,13 +3,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterfire_ui/firestore.dart';
 import 'package:pinpoint/items/post_item.dart';
-import 'package:pinpoint/providers/posts_provider.dart';
-import 'package:provider/provider.dart';
 import '../items/end_of_scroll_item.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class MyPosts extends StatelessWidget {
   const MyPosts({super.key});
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -34,19 +33,34 @@ class MyPosts extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.only(top: 8),
-                  child: Text(
-                    "You have collected 95 votes!",
-                    style: TextStyle(fontSize: 16),
-                    textAlign: TextAlign.center,
-                  ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: FirestoreQueryBuilder(
+                      query: FirebaseFirestore.instance
+                          .collection("pinpoint_post")
+                          .where("user_id",
+                              isEqualTo:
+                                  FirebaseAuth.instance.currentUser!.uid),
+                      builder: (context, snapshot, child) {
+                        if (snapshot.isFetching) {
+                          return const CircularProgressIndicator();
+                        }
+                        if (snapshot.hasError) {
+                          return Text('error ${snapshot.error}');
+                        } else {
+                          num totalLikes = 0;
+                          for (var element in snapshot.docs) {
+                            totalLikes += element["up_votes"].length;
+                            totalLikes -= element["down_votes"].length;
+                          }
+                          return Text(
+                            "You have collected $totalLikes votes!",
+                            style: const TextStyle(fontSize: 16),
+                            textAlign: TextAlign.center,
+                          );
+                        }
+                      }),
                 ),
-                ElevatedButton(
-                    onPressed: () {
-                      context.read<PostsProvider>().getMyUserVoteQuantity();
-                    },
-                    child: const Text("Log vote number")),
                 const Padding(
                   padding: EdgeInsets.only(top: 16.0),
                   child: Text(

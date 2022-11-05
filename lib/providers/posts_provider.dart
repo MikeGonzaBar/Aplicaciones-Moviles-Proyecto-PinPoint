@@ -103,22 +103,4 @@ class PostsProvider with ChangeNotifier {
       log(e.toString());
     }
   }
-
-  Future<int> getMyUserVoteQuantity() async {
-    int total = 0;
-
-    await FirebaseFirestore.instance
-        .collection("pinpoint_post")
-        .where("user_id", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-        .get()
-        .then((snapshot) {
-      for (var document in snapshot.docs) {
-        int upvotes = document.data()["up_votes"].length;
-        int downvotes = document.data()["down_votes"].length;
-        total = total + upvotes - downvotes;
-      }
-    });
-    log(total.toString());
-    return total;
-  }
 }
