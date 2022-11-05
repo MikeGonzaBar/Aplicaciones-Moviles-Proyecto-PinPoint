@@ -68,7 +68,7 @@ class _PostItemState extends State<PostItem> {
               Padding(
                 padding: const EdgeInsets.only(top: 6),
                 child: Text(
-                  "${widget.postObject["is_anonymous"] ? "Anónimo" : widget.postObject["username"]}",
+                  "${widget.postObject["is_anonymous"] ? "Anonymous" : widget.postObject["username"]}",
                   style: const TextStyle(fontWeight: FontWeight.w500),
                   textAlign: TextAlign.start,
                 ),

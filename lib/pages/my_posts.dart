@@ -28,7 +28,7 @@ class MyPosts extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(top: 16.0),
                   child: Text(
-                    "User since ${timeago.format(FirebaseAuth.instance.currentUser!.metadata.creationTime ?? DateTime.now())}",
+                    "User since ${timeago.format(FirebaseAuth.instance.currentUser!.metadata.creationTime ?? DateTime.now())}.",
                     style: const TextStyle(fontSize: 16),
                     textAlign: TextAlign.center,
                   ),
@@ -54,7 +54,7 @@ class MyPosts extends StatelessWidget {
                             totalLikes -= element["down_votes"].length;
                           }
                           return Text(
-                            "You have collected $totalLikes votes on your posts.",
+                            "You have collected $totalLikes votes on your posts!",
                             style: const TextStyle(fontSize: 16),
                             textAlign: TextAlign.center,
                           );
