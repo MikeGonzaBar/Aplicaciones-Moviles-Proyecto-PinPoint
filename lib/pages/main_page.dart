@@ -63,11 +63,11 @@ class _MainPageState extends State<MainPage> {
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.place_outlined),
-            label: "PinPoints",
+            label: "Home",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.add),
-            label: "New",
+            label: "New PinPoint",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person_outline),
