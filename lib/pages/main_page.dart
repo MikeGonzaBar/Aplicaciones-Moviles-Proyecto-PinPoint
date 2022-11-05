@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pinpoint/pages/feed.dart';
@@ -20,7 +22,7 @@ class _MainPageState extends State<MainPage> {
     MyPosts() //INDEX 3
   ];
 
-  void _onItemTapped(int index) {
+  void onItemTapped(int index) {
     setState(() {
       selectedIndex = index;
     });
@@ -74,7 +76,7 @@ class _MainPageState extends State<MainPage> {
         ],
         currentIndex: selectedIndex,
         selectedItemColor: const Color(0xFF009fb7),
-        onTap: _onItemTapped,
+        onTap: onItemTapped,
       ),
     );
   }

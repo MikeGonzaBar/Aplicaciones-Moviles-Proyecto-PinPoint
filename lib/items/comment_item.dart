@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pinpoint/providers/comments_provider.dart';
@@ -61,7 +63,7 @@ class _CommentItemState extends State<CommentItem> {
                           ),
                         ),
                         Text(
-                          "${_getVotesNumber()}",
+                          _getVotesNumber(),
                           style: const TextStyle(fontSize: 20),
                         ),
                         GestureDetector(
@@ -100,7 +102,6 @@ class _CommentItemState extends State<CommentItem> {
           .read<CommentsProvider>()
           .removeDownVoteComment(widget.commentData);
     } else {
-      print('IN ELSE, NOT DOWNVOTED');
       await context
           .read<CommentsProvider>()
           .removeUpVoteComment(widget.commentData);
@@ -118,7 +119,6 @@ class _CommentItemState extends State<CommentItem> {
           .read<CommentsProvider>()
           .removeUpVoteComment(widget.commentData);
     } else {
-      print('IN ELSE, NOT upVOTED');
       await context
           .read<CommentsProvider>()
           .removeDownVoteComment(widget.commentData);

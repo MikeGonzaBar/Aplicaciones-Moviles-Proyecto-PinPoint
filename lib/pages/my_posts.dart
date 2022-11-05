@@ -8,9 +8,9 @@ import 'package:timeago/timeago.dart' as timeago;
 
 class MyPosts extends StatelessWidget {
   const MyPosts({super.key});
+
   @override
   Widget build(BuildContext context) {
-    // padding: EdgeInsets.fromLTRB(8, 8, 8, 0),
     return SingleChildScrollView(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -33,13 +33,33 @@ class MyPosts extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                 ),
-                const Padding(
-                  padding: EdgeInsets.only(top: 8),
-                  child: Text(
-                    "You have collected 95 votes!",
-                    style: TextStyle(fontSize: 16),
-                    textAlign: TextAlign.center,
-                  ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: FirestoreQueryBuilder(
+                      query: FirebaseFirestore.instance
+                          .collection("pinpoint_post")
+                          .where("user_id",
+                              isEqualTo:
+                                  FirebaseAuth.instance.currentUser!.uid),
+                      builder: (context, snapshot, child) {
+                        if (snapshot.isFetching) {
+                          return const CircularProgressIndicator();
+                        }
+                        if (snapshot.hasError) {
+                          return Text('error ${snapshot.error}');
+                        } else {
+                          num totalLikes = 0;
+                          for (var element in snapshot.docs) {
+                            totalLikes += element["up_votes"].length;
+                            totalLikes -= element["down_votes"].length;
+                          }
+                          return Text(
+                            "You have collected $totalLikes votes on your posts.",
+                            style: const TextStyle(fontSize: 16),
+                            textAlign: TextAlign.center,
+                          );
+                        }
+                      }),
                 ),
                 const Padding(
                   padding: EdgeInsets.only(top: 16.0),
@@ -67,24 +87,24 @@ class MyPosts extends StatelessWidget {
               }
               if (snapshot.hasError) {
                 return Text('error ${snapshot.error}');
+              } else {
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: snapshot.docs.length + 1,
+                  itemBuilder: (BuildContext context, int index) {
+                    if (index != snapshot.docs.length) {
+                      return PostItem(
+                        postObject: snapshot.docs[index],
+                        isInComment: false,
+                      );
+                    } else {
+                      // If index is last, add ending dot
+                      return const EndOfScrollItem();
+                    }
+                  },
+                );
               }
-
-              return ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: snapshot.docs.length + 1,
-                itemBuilder: (BuildContext context, int index) {
-                  if (index != snapshot.docs.length) {
-                    return PostItem(
-                      postObject: snapshot.docs[index],
-                      isInComment: false,
-                    );
-                  } else {
-                    // If index is last, add ending dot
-                    return const EndOfScrollItem();
-                  }
-                },
-              );
             },
           ),
         ],

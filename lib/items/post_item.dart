@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pinpoint/pages/comment_section.dart';
@@ -125,7 +127,7 @@ class _PostItemState extends State<PostItem> {
                             ),
                           ),
                           Text(
-                            "${_getVotesNumber()}",
+                            _getVotesNumber(),
                             style: const TextStyle(fontSize: 20),
                           ),
                           GestureDetector(
@@ -163,7 +165,6 @@ class _PostItemState extends State<PostItem> {
         .contains(FirebaseAuth.instance.currentUser!.uid)) {
       await context.read<PostsProvider>().removeDownVotePost(widget.postObject);
     } else {
-      // print('IN ELSE, NOT DOWNVOTED');
       await context.read<PostsProvider>().removeUpVotePost(widget.postObject);
       await context.read<PostsProvider>().downVotePost(widget.postObject);
     }
@@ -175,7 +176,6 @@ class _PostItemState extends State<PostItem> {
         .contains(FirebaseAuth.instance.currentUser!.uid)) {
       await context.read<PostsProvider>().removeUpVotePost(widget.postObject);
     } else {
-      // print('IN ELSE, NOT upVOTED');
       await context.read<PostsProvider>().removeDownVotePost(widget.postObject);
       await context.read<PostsProvider>().upVotePost(widget.postObject);
     }
