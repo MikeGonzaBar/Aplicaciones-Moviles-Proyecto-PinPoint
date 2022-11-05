@@ -54,7 +54,7 @@ class MyPosts extends StatelessWidget {
                             totalLikes -= element["down_votes"].length;
                           }
                           return Text(
-                            "You have collected $totalLikes votes!",
+                            "You have collected $totalLikes votes on your posts.",
                             style: const TextStyle(fontSize: 16),
                             textAlign: TextAlign.center,
                           );

@@ -226,7 +226,6 @@ class _CommentSectionState extends State<CommentSection> {
               right: 20,
               child: Center(
                 child: SizedBox(
-                  // color: Colors.red,
                   width: MediaQuery.of(context).size.width,
                   height: 50,
                   child: TextField(
@@ -234,8 +233,6 @@ class _CommentSectionState extends State<CommentSection> {
                     textCapitalization: TextCapitalization.sentences,
                     decoration: InputDecoration(
                       hintText: "Comment something...",
-                      // label: Text("Hello"),
-                      // labelText: "Comment something...",
                       filled: true,
                       fillColor: const Color(0xfffafafa),
                       border: const OutlineInputBorder(),
