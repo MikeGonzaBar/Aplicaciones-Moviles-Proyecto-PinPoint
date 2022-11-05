@@ -38,7 +38,8 @@ class _NewPostState extends State<NewPost> {
                     style: const TextStyle(fontWeight: FontWeight.w600),
                     cursorColor: const Color(0xFF009fb7),
                     decoration: const InputDecoration(
-                      labelText: 'Write your PinPoint',
+                      isDense: true,
+                      labelText: 'Write a PinPoint',
                       border: InputBorder.none,
                     ),
                   ),
