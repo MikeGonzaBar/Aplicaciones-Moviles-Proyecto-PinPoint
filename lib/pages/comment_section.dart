@@ -81,7 +81,7 @@ class _CommentSectionState extends State<CommentSection> {
                               Padding(
                                 padding: const EdgeInsets.only(top: 6),
                                 child: Text(
-                                  "${widget.postData["is_anonymous"] ? "Anónimo" : widget.postData["username"]}",
+                                  "${widget.postData["is_anonymous"] ? "Anonymous" : widget.postData["username"]}",
                                   style: const TextStyle(
                                       fontWeight: FontWeight.w500),
                                   textAlign: TextAlign.start,
