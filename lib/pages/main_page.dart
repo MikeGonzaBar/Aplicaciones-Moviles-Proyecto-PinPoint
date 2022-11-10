@@ -56,9 +56,9 @@ class _MainPageState extends State<MainPage> {
                     },
                   ),
       ]),
-      body: Center(
-        child: _widgetOptions.elementAt(selectedIndex),
-      ),
+      body: Align(
+          alignment: Alignment.topCenter,
+          child: _widgetOptions.elementAt(selectedIndex)),
       bottomNavigationBar: BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(

@@ -26,181 +26,213 @@ class _NewPostState extends State<NewPost> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: const Color(0xffe8eaed),
-                borderRadius: BorderRadius.circular(15),
-              ),
-              padding: const EdgeInsets.all(18),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextField(
-                    controller: postTxtController,
-                    maxLines: 3,
-                    style: const TextStyle(fontWeight: FontWeight.w600),
-                    cursorColor: const Color(0xFF009fb7),
-                    decoration: const InputDecoration(
-                      isDense: true,
-                      labelText: 'Write a PinPoint',
-                      border: InputBorder.none,
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 16.0),
-                    child: GestureDetector(
-                      onTap: () {
-                        _addImage();
-                        hasImage = true;
-                        setState(() {});
-                      },
-                      child: const Icon(
-                        Icons.image_outlined,
-                        size: 30,
+    return SingleChildScrollView(
+      child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xffe8eaed),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                padding: const EdgeInsets.all(18),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextField(
+                      controller: postTxtController,
+                      maxLines: 3,
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                      cursorColor: const Color(0xFF009fb7),
+                      decoration: const InputDecoration(
+                        isDense: true,
+                        labelText: 'Write a PinPoint',
+                        border: InputBorder.none,
                       ),
                     ),
-                  ),
-                  if (pickedFile != null)
-                    Padding(
-                        padding: const EdgeInsets.only(top: 16.0),
-                        child: GestureDetector(
-                          onTap: () {
-                            _addImage();
-                            hasImage = false;
-                            setState(() {});
-                          },
-                          child: Image.file(File(pickedFile!.path!),
-                              width: double.infinity, fit: BoxFit.cover),
-                        ))
-                ],
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16.0),
+                          child: GestureDetector(
+                            onTap: () {
+                              _addImage();
+                              hasImage = true;
+                              setState(() {});
+                            },
+                            child: const Icon(
+                              Icons.image_outlined,
+                              size: 30,
+                            ),
+                          ),
+                        ),
+                        if (pickedFile != null)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 16.0),
+                            child: GestureDetector(
+                              onTap: () {
+                                _deleteImage();
+                                hasImage = false;
+                                setState(() {});
+                              },
+                              child: const Icon(
+                                Icons.hide_image_outlined,
+                                size: 30,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                    if (pickedFile != null)
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 16.0),
+                          child: GestureDetector(
+                            onTap: () {
+                              _addImage();
+                              hasImage = false;
+                              setState(() {});
+                            },
+                            child: Image.file(File(pickedFile!.path!),
+                                width:
+                                    (MediaQuery.of(context).size.width / 8) * 2,
+                                fit: BoxFit.cover),
+                          ),
+                        ),
+                      )
+                  ],
+                ),
               ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  "Publish anonymously",
-                  style: TextStyle(fontWeight: FontWeight.w600),
-                ),
-                Switch(
-                  value: isAnon,
-                  onChanged: (value) {
-                    setState(() {
-                      isAnon = value;
-                    });
-                  },
-                  activeTrackColor: const Color.fromARGB(255, 145, 200, 209),
-                  activeColor: const Color(0xFF009fb7),
-                  inactiveTrackColor: const Color(0xffe8eaed),
-                  inactiveThumbColor: const Color(0xFF8492A6),
-                ),
-              ],
-            ),
-            const Text("Publish for:",
-                style: TextStyle(fontWeight: FontWeight.w600)),
-            Padding(
-              padding: const EdgeInsets.only(top: 16.0),
-              child: Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        daysActive = 1;
-                      });
-                    },
-                    style: ElevatedButton.styleFrom(
-                      fixedSize: const Size(100, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8), // <-- Radius
-                      ),
-                      backgroundColor: daysActive == 1
-                          ? const Color(0xFF009fb7)
-                          : const Color(0xFFC0CCDA),
-                    ),
-                    child: const Text("1 dia"),
+                  const Text(
+                    "Publish anonymously",
+                    style: TextStyle(fontWeight: FontWeight.w600),
                   ),
-                  ElevatedButton(
-                    onPressed: () {
+                  Switch(
+                    value: isAnon,
+                    onChanged: (value) {
                       setState(() {
-                        daysActive = 7;
+                        isAnon = value;
                       });
                     },
-                    style: ElevatedButton.styleFrom(
-                      fixedSize: const Size(100, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8), // <-- Radius
-                      ),
-                      backgroundColor: daysActive == 7
-                          ? const Color(0xFF009fb7)
-                          : const Color(0xFFC0CCDA),
-                    ),
-                    child: const Text("7 dias"),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        daysActive = 15;
-                      });
-                    },
-                    style: ElevatedButton.styleFrom(
-                      fixedSize: const Size(100, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8), // <-- Radius
-                      ),
-                      backgroundColor: daysActive == 15
-                          ? const Color(0xFF009fb7)
-                          : const Color(0xFFC0CCDA),
-                    ),
-                    child: const Text("15 dias"),
+                    activeTrackColor: const Color.fromARGB(255, 145, 200, 209),
+                    activeColor: const Color(0xFF009fb7),
+                    inactiveTrackColor: const Color(0xffe8eaed),
+                    inactiveThumbColor: const Color(0xFF8492A6),
                   ),
                 ],
               ),
-            ),
-            const Spacer(),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: ElevatedButton(
-                onPressed: () {
-                  // Validate input
-                  if (daysActive == 0 || postTxtController.text == '') {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: const Text(
-                            'All posts need a message and time limit.'),
-                        action: SnackBarAction(
-                          label: 'Ok',
-                          onPressed: () {
-                            ScaffoldMessenger.of(context)
-                                .removeCurrentSnackBar();
-                          },
+              const Text("Publish for:",
+                  style: TextStyle(fontWeight: FontWeight.w600)),
+              Padding(
+                padding: const EdgeInsets.only(top: 16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          daysActive = 1;
+                        });
+                      },
+                      style: ElevatedButton.styleFrom(
+                        fixedSize: const Size(100, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8), // <-- Radius
                         ),
+                        backgroundColor: daysActive == 1
+                            ? const Color(0xFF009fb7)
+                            : const Color(0xFFC0CCDA),
                       ),
-                    );
-                  } else {
-                    _publish();
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  fixedSize: const Size(100, 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8), // <-- Radius
-                  ),
-                  backgroundColor: const Color(0xFF009fb7),
+                      child: const Text("1 dia"),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          daysActive = 7;
+                        });
+                      },
+                      style: ElevatedButton.styleFrom(
+                        fixedSize: const Size(100, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8), // <-- Radius
+                        ),
+                        backgroundColor: daysActive == 7
+                            ? const Color(0xFF009fb7)
+                            : const Color(0xFFC0CCDA),
+                      ),
+                      child: const Text("7 dias"),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          daysActive = 15;
+                        });
+                      },
+                      style: ElevatedButton.styleFrom(
+                        fixedSize: const Size(100, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8), // <-- Radius
+                        ),
+                        backgroundColor: daysActive == 15
+                            ? const Color(0xFF009fb7)
+                            : const Color(0xFFC0CCDA),
+                      ),
+                      child: const Text("15 dias"),
+                    ),
+                  ],
                 ),
-                child: const Text("Publish"),
               ),
-            ),
-          ],
-        ));
+              Align(
+                alignment: Alignment.bottomRight,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Validate input
+                      if (daysActive == 0 || postTxtController.text == '') {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: const Text(
+                                'All posts need a message and time limit.'),
+                            action: SnackBarAction(
+                              label: 'Ok',
+                              onPressed: () {
+                                ScaffoldMessenger.of(context)
+                                    .removeCurrentSnackBar();
+                              },
+                            ),
+                          ),
+                        );
+                      } else {
+                        _publish();
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      fixedSize: const Size(100, 50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8), // <-- Radius
+                      ),
+                      backgroundColor: const Color(0xFF009fb7),
+                    ),
+                    child: const Text("Publish"),
+                  ),
+                ),
+              ),
+            ],
+          )),
+    );
   }
 
   Future<void> _publish() async {
+    String imageUrl;
     LocationPermission permission = await Geolocator.checkPermission();
 
     if (permission == LocationPermission.denied ||
@@ -210,8 +242,13 @@ class _NewPostState extends State<NewPost> {
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
     //Upload File
-    String imageUrl =
-        await context.read<ImagesProvider>().uploadFile(pickedFile);
+
+    if (pickedFile.toString() == 'null') {
+      imageUrl = '';
+    } else {
+      imageUrl = await context.read<ImagesProvider>().uploadFile(pickedFile);
+    }
+
     dynamic postObj = {
       "text": postTxtController.text,
       "isAnon": isAnon,
@@ -256,8 +293,12 @@ class _NewPostState extends State<NewPost> {
   }
 
   Future<void> _addImage() async {
-    log(hasImage.toString());
     pickedFile = await context.read<ImagesProvider>().selectFile();
+    setState(() {});
+  }
+
+  void _deleteImage() {
+    pickedFile = null;
     setState(() {});
   }
 }
