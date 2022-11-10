@@ -14,12 +14,11 @@ class RegsiterPage extends StatefulWidget {
   State<RegsiterPage> createState() => _RegsiterPageState();
 }
 
-final usrController = TextEditingController();
-final emailController = TextEditingController();
-final pwdController = TextEditingController();
-final pwdConfirmController = TextEditingController();
-
 class _RegsiterPageState extends State<RegsiterPage> {
+  final usrController = TextEditingController();
+  final emailController = TextEditingController();
+  final pwdController = TextEditingController();
+  final pwdConfirmController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     String isValid = "";

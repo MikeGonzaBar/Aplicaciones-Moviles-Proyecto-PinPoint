@@ -1,7 +1,12 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:developer';
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:pinpoint/providers/images_provider.dart';
 import 'package:pinpoint/providers/posts_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -16,6 +21,9 @@ class _NewPostState extends State<NewPost> {
   final postTxtController = TextEditingController();
   bool isAnon = false;
   int daysActive = 0;
+  bool hasImage = false;
+  PlatformFile? pickedFile;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -43,13 +51,32 @@ class _NewPostState extends State<NewPost> {
                       border: InputBorder.none,
                     ),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.only(top: 16.0),
-                    child: Icon(
-                      Icons.image_outlined,
-                      size: 30,
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        _addImage();
+                        hasImage = true;
+                        setState(() {});
+                      },
+                      child: const Icon(
+                        Icons.image_outlined,
+                        size: 30,
+                      ),
                     ),
-                  )
+                  ),
+                  if (pickedFile != null)
+                    Padding(
+                        padding: const EdgeInsets.only(top: 16.0),
+                        child: GestureDetector(
+                          onTap: () {
+                            _addImage();
+                            hasImage = false;
+                            setState(() {});
+                          },
+                          child: Image.file(File(pickedFile!.path!),
+                              width: double.infinity, fit: BoxFit.cover),
+                        ))
                 ],
               ),
             ),
@@ -182,13 +209,17 @@ class _NewPostState extends State<NewPost> {
     }
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
-
+    //Upload File
+    String imageUrl =
+        await context.read<ImagesProvider>().uploadFile(pickedFile);
     dynamic postObj = {
       "text": postTxtController.text,
       "isAnon": isAnon,
       "daysActive": daysActive,
       "location": position,
+      "image": imageUrl
     };
+
     if (await context.read<PostsProvider>().addNewPost(postObj) == true) {
       // If post submission was successful
       showDialog(
@@ -222,5 +253,11 @@ class _NewPostState extends State<NewPost> {
         ),
       );
     }
+  }
+
+  Future<void> _addImage() async {
+    log(hasImage.toString());
+    pickedFile = await context.read<ImagesProvider>().selectFile();
+    setState(() {});
   }
 }

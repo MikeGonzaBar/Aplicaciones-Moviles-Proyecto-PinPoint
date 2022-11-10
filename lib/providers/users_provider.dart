@@ -12,11 +12,15 @@ class UsersProvider with ChangeNotifier {
     String response = '';
     try {
       if (response == '') {
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: userObj['email'],
+          password: userObj['password'],
+        );
         FirebaseAuth.instance.currentUser!
             .updateDisplayName(userObj["username"]);
         response = 'Created';
       }
-
+      log(response);
       notifyListeners();
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
