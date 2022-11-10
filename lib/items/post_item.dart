@@ -59,7 +59,7 @@ class _PostItemState extends State<PostItem> {
                       borderRadius: BorderRadius.circular(16),
                       child: Image(
                         width: MediaQuery.of(context).size.width * 0.75,
-                        image: AssetImage(widget.postObject["image"]),
+                        image: NetworkImage(widget.postObject["image"]),
                       ),
                     ),
                   ),

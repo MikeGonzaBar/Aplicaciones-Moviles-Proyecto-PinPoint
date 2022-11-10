@@ -18,7 +18,7 @@ class PostsProvider with ChangeNotifier {
                   'date_limit':
                       DateTime.now().add(Duration(days: postObj["daysActive"])),
                   'down_votes': [],
-                  'image': '',
+                  'image': postObj["image"],
                   'is_anonymous': postObj["isAnon"],
                   'latitude': postObj["location"].latitude,
                   'longitude': postObj["location"].longitude,
