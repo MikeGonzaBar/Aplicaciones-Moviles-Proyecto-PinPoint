@@ -22,7 +22,7 @@ class _TimeDistanceTextState extends State<TimeDistanceText> {
             style: const TextStyle(fontWeight: FontWeight.w600),
           );
         } else {
-          return const Text('Loading...',
+          return const Text('📍...\n⏰...',
               style: TextStyle(fontWeight: FontWeight.w600));
         }
       },
