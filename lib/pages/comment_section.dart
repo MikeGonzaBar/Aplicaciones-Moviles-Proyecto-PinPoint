@@ -66,12 +66,12 @@ class _CommentSectionState extends State<CommentSection> {
                                   padding: const EdgeInsets.only(top: 10),
                                   child: Center(
                                     child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(16),
+                                      borderRadius: BorderRadius.circular(10),
                                       child: Image(
                                         width:
                                             MediaQuery.of(context).size.width *
                                                 0.75,
-                                        image: AssetImage(
+                                        image: NetworkImage(
                                             widget.postData["image"]),
                                       ),
                                     ),
