@@ -71,7 +71,7 @@ class _CommentSectionState extends State<CommentSection> {
                                         width:
                                             MediaQuery.of(context).size.width *
                                                 0.75,
-                                        image: AssetImage(
+                                        image: NetworkImage(
                                             widget.postData["image"]),
                                       ),
                                     ),
