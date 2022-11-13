@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -59,6 +57,7 @@ class _RegsiterPageState extends State<RegsiterPage> {
                         pwdController.text,
                         pwdConfirmController.text);
                     setState(() {});
+                    if (!mounted) return;
                     if (isValid == 'Created') {
                       Navigator.of(context).pushReplacement(
                         MaterialPageRoute(
@@ -163,7 +162,9 @@ class _RegsiterPageState extends State<RegsiterPage> {
         await context.read<UsersProvider>().registerNewUser(userObj);
     log(response);
     if (response == 'Created') {
-      await context.read<UsersProvider>().signInUser(userObj);
+      if (mounted) {
+        await context.read<UsersProvider>().signInUser(userObj);
+      }
     }
     return response;
   }

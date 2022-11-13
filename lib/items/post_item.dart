@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pinpoint/pages/comment_section.dart';
@@ -166,6 +164,7 @@ class _PostItemState extends State<PostItem> {
       await context.read<PostsProvider>().removeDownVotePost(widget.postObject);
     } else {
       await context.read<PostsProvider>().removeUpVotePost(widget.postObject);
+      if (!mounted) return;
       await context.read<PostsProvider>().downVotePost(widget.postObject);
     }
     return;
@@ -177,6 +176,7 @@ class _PostItemState extends State<PostItem> {
       await context.read<PostsProvider>().removeUpVotePost(widget.postObject);
     } else {
       await context.read<PostsProvider>().removeDownVotePost(widget.postObject);
+      if (!mounted) return;
       await context.read<PostsProvider>().upVotePost(widget.postObject);
     }
     return;

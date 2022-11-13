@@ -1,4 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -266,6 +265,7 @@ class _CommentSectionState extends State<CommentSection> {
       await context.read<PostsProvider>().removeDownVotePost(widget.postData);
     } else {
       await context.read<PostsProvider>().removeUpVotePost(widget.postData);
+      if (!mounted) return;
       await context.read<PostsProvider>().downVotePost(widget.postData);
     }
     return;
@@ -277,6 +277,7 @@ class _CommentSectionState extends State<CommentSection> {
       await context.read<PostsProvider>().removeUpVotePost(widget.postData);
     } else {
       await context.read<PostsProvider>().removeDownVotePost(widget.postData);
+      if (!mounted) return;
       await context.read<PostsProvider>().upVotePost(widget.postData);
     }
     return;
