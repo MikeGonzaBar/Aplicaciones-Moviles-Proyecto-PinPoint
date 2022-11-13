@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -245,6 +243,7 @@ class _NewPostState extends State<NewPost> {
     if (pickedFile.toString() == 'null') {
       imageUrl = '';
     } else {
+      if (!mounted) return;
       imageUrl = await context.read<ImagesProvider>().uploadFile(pickedFile);
     }
 
@@ -255,7 +254,7 @@ class _NewPostState extends State<NewPost> {
       "location": position,
       "image": imageUrl
     };
-
+    if (!mounted) return;
     if (await context.read<PostsProvider>().addNewPost(postObj) == true) {
       // If post submission was successful
       showDialog(

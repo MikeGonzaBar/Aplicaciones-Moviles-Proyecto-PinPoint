@@ -51,7 +51,7 @@ class MyApp extends StatelessWidget {
           Theme.of(context).textTheme,
         ),
       ),
-      title: 'Material App',
+      title: 'PinPoint',
       home: FirebaseAuth.instance.currentUser == null
           ? const LoginPage()
           : const MainPage(),
