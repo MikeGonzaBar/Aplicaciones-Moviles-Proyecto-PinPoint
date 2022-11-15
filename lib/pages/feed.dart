@@ -1,49 +1,31 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutterfire_ui/firestore.dart';
 import 'package:pinpoint/items/post_item.dart';
+import 'package:pinpoint/providers/posts_provider.dart';
+import 'package:provider/provider.dart';
 import '../items/end_of_scroll_item.dart';
 
-class Feed extends StatefulWidget {
+class Feed extends StatelessWidget {
   const Feed({super.key});
 
   @override
-  State<Feed> createState() => _FeedState();
-}
-
-class _FeedState extends State<Feed> {
-  @override
   Widget build(BuildContext context) {
+    // _getList(context);
     return Column(
       children: [
         Expanded(
-          child: FirestoreQueryBuilder<dynamic>(
-            pageSize: 100,
-            query: FirebaseFirestore.instance
-                .collection("pinpoint_post")
-                .orderBy('date', descending: true),
-            builder: (context, snapshot, _) {
-              if (snapshot.isFetching) {
-                return const CircularProgressIndicator();
+          child: ListView.builder(
+            itemCount: context.watch<PostsProvider>().getPostsList.length + 1,
+            itemBuilder: (BuildContext context, int index) {
+              if (index != context.watch<PostsProvider>().getPostsList.length) {
+                return PostItem(
+                  postObject:
+                      context.watch<PostsProvider>().getPostsList[index],
+                  isInComment: false,
+                );
+              } else {
+                // If index is last, add ending dot
+                return const EndOfScrollItem();
               }
-              if (snapshot.hasError) {
-                return Text('error ${snapshot.error}');
-              }
-
-              return ListView.builder(
-                itemCount: snapshot.docs.length + 1,
-                itemBuilder: (BuildContext context, int index) {
-                  if (index != snapshot.docs.length) {
-                    return PostItem(
-                      postObject: snapshot.docs[index],
-                      isInComment: false,
-                    );
-                  } else {
-                    // If index is last, add ending dot
-                    return const EndOfScrollItem();
-                  }
-                },
-              );
             },
           ),
         ),
