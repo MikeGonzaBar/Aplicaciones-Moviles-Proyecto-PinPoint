@@ -41,6 +41,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (FirebaseAuth.instance.currentUser != null) {
+      _getList(context);
+    }
     return MaterialApp(
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
@@ -56,5 +59,9 @@ class MyApp extends StatelessWidget {
           ? const LoginPage()
           : const MainPage(),
     );
+  }
+
+  void _getList(BuildContext context) {
+    context.read<PostsProvider>().getList();
   }
 }
