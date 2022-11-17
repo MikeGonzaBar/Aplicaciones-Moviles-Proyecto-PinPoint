@@ -4,6 +4,8 @@ import 'package:pinpoint/pages/feed.dart';
 import 'package:pinpoint/pages/login.dart';
 import 'package:pinpoint/pages/my_posts.dart';
 import 'package:pinpoint/pages/new_post.dart';
+import 'package:pinpoint/providers/posts_provider.dart';
+import 'package:provider/provider.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -38,7 +40,13 @@ class _MainPageState extends State<MainPage> {
     return Scaffold(
       appBar: AppBar(title: _appbarOptions.elementAt(selectedIndex), actions: [
         selectedIndex == 0
-            ? Container()
+            ? IconButton(
+                icon: const Icon(Icons.refresh),
+                tooltip: 'Refresh feed',
+                onPressed: () async {
+                  _getList(context);
+                },
+              )
             : selectedIndex == 1
                 ? Container()
                 : IconButton(
@@ -78,5 +86,9 @@ class _MainPageState extends State<MainPage> {
         onTap: onItemTapped,
       ),
     );
+  }
+
+  void _getList(BuildContext context) {
+    context.read<PostsProvider>().getList();
   }
 }

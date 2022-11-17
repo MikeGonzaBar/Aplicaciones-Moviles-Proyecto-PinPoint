@@ -34,6 +34,21 @@ class PostsProvider with ChangeNotifier {
           .collection('pinpoint_post')
           .doc(postId.id)
           .update({'post_id': postId.id});
+      _filteredPostsList.add({
+        'comments_number': 0,
+        'date': Timestamp.fromDate(DateTime.now()),
+        'date_limit': Timestamp.fromDate(
+            DateTime.now().add(Duration(days: postObj["daysActive"]))),
+        'down_votes': [],
+        'image': postObj["image"],
+        'is_anonymous': postObj["isAnon"],
+        'latitude': postObj["location"].latitude,
+        'longitude': postObj["location"].longitude,
+        'text': postObj["text"],
+        'up_votes': [],
+        'user_id': FirebaseAuth.instance.currentUser!.uid,
+        'username': FirebaseAuth.instance.currentUser!.displayName
+      });
       notifyListeners();
       return true;
     } catch (e) {
@@ -134,7 +149,7 @@ class PostsProvider with ChangeNotifier {
         .orderBy('date', descending: true)
         .get();
     List<QueryDocumentSnapshot<Map<String, dynamic>>> docs = postsSnapshot.docs;
-    log(_allPostsList.toString());
+
     for (var doc in docs) {
       dynamic post = doc.data();
 
