@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -196,14 +195,18 @@ class _CommentSectionState extends State<CommentSection> {
                               return Text('error ${snapshot.error}');
                             }
 
+                            List<QueryDocumentSnapshot<dynamic>>
+                                reversedSnapshot =
+                                snapshot.docs.reversed.toList();
+
                             return ListView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
-                              itemCount: snapshot.docs.length + 1,
+                              itemCount: reversedSnapshot.length + 1,
                               itemBuilder: (BuildContext context, int index) {
-                                if (index != snapshot.docs.length) {
+                                if (index != reversedSnapshot.length) {
                                   return CommentItem(
-                                      commentData: snapshot.docs[index]);
+                                      commentData: reversedSnapshot[index]);
                                 } else {
                                   // If index is last, add ending dot
                                   return const EndOfScrollItem();

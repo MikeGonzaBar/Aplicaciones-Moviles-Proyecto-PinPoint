@@ -21,6 +21,7 @@ class Feed extends StatelessWidget {
                   postObject:
                       context.watch<PostsProvider>().getPostsList[index],
                   isInComment: false,
+                  isMyPost: false,
                 );
               } else {
                 // If index is last, add ending dot

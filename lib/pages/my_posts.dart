@@ -97,6 +97,7 @@ class MyPosts extends StatelessWidget {
                       return PostItem(
                         postObject: snapshot.docs[index],
                         isInComment: false,
+                        isMyPost: true,
                       );
                     } else {
                       // If index is last, add ending dot

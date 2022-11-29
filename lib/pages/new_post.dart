@@ -19,6 +19,7 @@ class _NewPostState extends State<NewPost> {
   bool isAnon = false;
   int daysActive = 0;
   bool hasImage = false;
+  bool enabledBtn = true;
   PlatformFile? pickedFile;
 
   @override
@@ -192,26 +193,32 @@ class _NewPostState extends State<NewPost> {
                 child: Padding(
                   padding: const EdgeInsets.only(top: 16.0),
                   child: ElevatedButton(
-                    onPressed: () {
-                      // Validate input
-                      if (daysActive == 0 || postTxtController.text == '') {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: const Text(
-                                'All posts need a message and time limit.'),
-                            action: SnackBarAction(
-                              label: 'Ok',
-                              onPressed: () {
-                                ScaffoldMessenger.of(context)
-                                    .removeCurrentSnackBar();
-                              },
-                            ),
-                          ),
-                        );
-                      } else {
-                        _publish();
-                      }
-                    },
+                    onPressed: enabledBtn
+                        ? () async {
+                            // Validate input
+                            if (daysActive == 0 ||
+                                postTxtController.text == '') {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: const Text(
+                                      'All posts need a message and time limit.'),
+                                  action: SnackBarAction(
+                                    label: 'Ok',
+                                    onPressed: () {
+                                      ScaffoldMessenger.of(context)
+                                          .removeCurrentSnackBar();
+                                    },
+                                  ),
+                                ),
+                              );
+                            } else {
+                              setState(() {
+                                enabledBtn = false;
+                              });
+                              await _publish();
+                            }
+                          }
+                        : null,
                     style: ElevatedButton.styleFrom(
                       fixedSize: const Size(100, 50),
                       shape: RoundedRectangleBorder(
@@ -238,6 +245,19 @@ class _NewPostState extends State<NewPost> {
     }
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('Posting your PinPoint...'),
+        action: SnackBarAction(
+          label: 'Ok',
+          onPressed: () {
+            ScaffoldMessenger.of(context).removeCurrentSnackBar();
+          },
+        ),
+      ),
+    );
+
     //Upload File
 
     if (pickedFile.toString() == 'null') {
@@ -257,6 +277,12 @@ class _NewPostState extends State<NewPost> {
     if (!mounted) return;
     if (await context.read<PostsProvider>().addNewPost(postObj) == true) {
       // If post submission was successful
+
+      postTxtController.clear();
+      isAnon = false;
+      daysActive = 0;
+      hasImage = false;
+
       showDialog(
         context: context,
         builder: (BuildContext context) => AlertDialog(
@@ -273,6 +299,9 @@ class _NewPostState extends State<NewPost> {
           ],
         ),
       );
+      setState(() {
+        enabledBtn = true;
+      });
     } else {
       // If post submission was not successful
       ScaffoldMessenger.of(context).showSnackBar(
