@@ -3,8 +3,6 @@ import 'package:flutterfire_ui/auth.dart';
 import 'package:pinpoint/pages/main_page.dart';
 import 'package:pinpoint/pages/register.dart';
 
-import '../keys/keys.dart';
-
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
