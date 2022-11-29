@@ -8,7 +8,6 @@ class UsersProvider with ChangeNotifier {
   dynamic get getUsersList => _user;
 
   Future<String> registerNewUser(dynamic userObj) async {
-    // log('INSIDE PROVIDER');
     String response = '';
     try {
       if (response == '') {
@@ -20,7 +19,7 @@ class UsersProvider with ChangeNotifier {
             .updateDisplayName(userObj["username"]);
         response = 'Created';
       }
-      log(response);
+
       notifyListeners();
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {

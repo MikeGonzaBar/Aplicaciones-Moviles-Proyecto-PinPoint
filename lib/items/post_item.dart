@@ -10,8 +10,13 @@ import 'package:timeago/timeago.dart' as timeago;
 class PostItem extends StatefulWidget {
   final dynamic postObject;
   final bool isInComment;
-  const PostItem(
-      {super.key, required this.postObject, required this.isInComment});
+  final bool isMyPost;
+  const PostItem({
+    super.key,
+    required this.postObject,
+    required this.isInComment,
+    required this.isMyPost,
+  });
 
   @override
   State<PostItem> createState() => _PostItemState();
@@ -43,10 +48,50 @@ class _PostItemState extends State<PostItem> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // MAIN TEXT
-              Text(
-                widget.postObject["text"],
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      widget.postObject["text"],
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 18),
+                    ),
+                  ),
+                  if (widget.isMyPost)
+                    IconButton(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) => AlertDialog(
+                            title: const Text(
+                                'Are you sure you want to delete your post?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  _deletePost(widget.postObject);
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text(
+                                  'Delete',
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                  ),
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Cancel'),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.delete_outline),
+                      splashColor: Colors.red,
+                    )
+                ],
               ),
               // IMAGE
               if (widget.postObject["image"] != "")
@@ -190,5 +235,9 @@ class _PostItemState extends State<PostItem> {
         chooserTitle: 'Share your PinPoint with anyone!');
 
     return;
+  }
+
+  Future<void> _deletePost(postObject) async {
+    await context.read<PostsProvider>().deleteMyPost(widget.postObject);
   }
 }

@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
@@ -24,7 +23,7 @@ class ImagesProvider with ChangeNotifier {
     UploadTask uploadTask = ref.putFile(file);
     final snapshot = await uploadTask.whenComplete(() {});
     final urlDownload = await snapshot.ref.getDownloadURL();
-    log(urlDownload);
+
     return urlDownload;
   }
 }

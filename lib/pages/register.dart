@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:pinpoint/pages/main_page.dart';
 import 'package:pinpoint/providers/users_provider.dart';
@@ -59,6 +57,7 @@ class _RegsiterPageState extends State<RegsiterPage> {
                     setState(() {});
                     if (!mounted) return;
                     if (isValid == 'Created') {
+                      Navigator.of(context).pop();
                       Navigator.of(context).pushReplacement(
                         MaterialPageRoute(
                           builder: (context) => const MainPage(),
@@ -147,7 +146,6 @@ class _RegsiterPageState extends State<RegsiterPage> {
   }
 
   Future<String> _register(user, email, password, confPassword) async {
-    log('VERIFYING DATA');
     if (password != confPassword ||
         user == '' ||
         email == '' ||
@@ -156,11 +154,10 @@ class _RegsiterPageState extends State<RegsiterPage> {
       return "";
     }
     dynamic userObj = {'username': user, 'email': email, 'password': password};
-    log('OBJECT CREATED');
-    log(userObj.toString());
+
     String response =
         await context.read<UsersProvider>().registerNewUser(userObj);
-    log(response);
+
     if (response == 'Created') {
       if (mounted) {
         await context.read<UsersProvider>().signInUser(userObj);

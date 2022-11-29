@@ -45,3 +45,6 @@ app.*.map.json
 /lib/utils/secrets.dart
 /android/app/google-services.json
 .vscode/settings.json
+
+# Keys
+/lib/keys/*

@@ -34,7 +34,7 @@ class PostsProvider with ChangeNotifier {
           .collection('pinpoint_post')
           .doc(postId.id)
           .update({'post_id': postId.id});
-      _filteredPostsList.add({
+      _filteredPostsList.insert(0, {
         'comments_number': 0,
         'date': Timestamp.fromDate(DateTime.now()),
         'date_limit': Timestamp.fromDate(
@@ -168,7 +168,6 @@ class PostsProvider with ChangeNotifier {
       List<QueryDocumentSnapshot<Map<String, dynamic>>> docs) async {
     Position position = await _getPosition();
 
-    // log(docs.toString());
     _allPostsList = [];
     _filteredPostsList = [];
     for (var doc in docs) {
@@ -178,7 +177,6 @@ class PostsProvider with ChangeNotifier {
       if (today.isBefore(limitDate) &&
           !_filteredPostsList.contains(post) &&
           await _getProximity(post, position)) {
-        // log('Limit: ${limitDate.toString()} - Today: ${DateTime.now()} - Text: ${post['text']}');
         _filteredPostsList.add(post);
       }
       _allPostsList.add(post);
@@ -208,5 +206,27 @@ class PostsProvider with ChangeNotifier {
     bool response = distanceInMeters <= 2000 ? true : false;
 
     return response;
+  }
+
+  deleteMyPost(postObject) {
+    int index = -1;
+
+    for (var i = 0; i < _filteredPostsList.length; i++) {
+      if (_filteredPostsList[i]['post_id'] == postObject['post_id']) {
+        index = i;
+        break;
+      }
+    }
+
+    if (index != -1) {
+      _filteredPostsList.removeAt(index);
+    }
+    notifyListeners();
+    FirebaseFirestore.instance
+        .collection('pinpoint_post')
+        .doc(postObject['post_id'])
+        .delete()
+        .then((value) => log("User Deleted"))
+        .catchError((error) => log("Failed to delete user: $error"));
   }
 }

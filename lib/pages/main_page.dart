@@ -44,7 +44,14 @@ class _MainPageState extends State<MainPage> {
                 icon: const Icon(Icons.refresh),
                 tooltip: 'Refresh feed',
                 onPressed: () async {
-                  _getList(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Refreshing your feed...'),
+                    ),
+                  );
+                  await _getList(context);
+                  if (!mounted) return;
+                  ScaffoldMessenger.of(context).removeCurrentSnackBar();
                 },
               )
             : selectedIndex == 1
@@ -88,7 +95,7 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  void _getList(BuildContext context) {
-    context.read<PostsProvider>().getList();
+  Future<void> _getList(BuildContext context) async {
+    await context.read<PostsProvider>().getList();
   }
 }
