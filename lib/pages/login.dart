@@ -52,9 +52,6 @@ class LoginPage extends StatelessWidget {
           );
         },
         providerConfigs: const [
-          GoogleProviderConfiguration(
-            clientId: googleClientKey,
-          ),
           EmailProviderConfiguration(),
         ],
         actions: [
