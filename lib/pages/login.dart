@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutterfire_ui/auth.dart';
+import 'package:pinpoint/keys/keys.dart';
 import 'package:pinpoint/pages/main_page.dart';
 import 'package:pinpoint/pages/register.dart';
 
@@ -50,6 +51,9 @@ class LoginPage extends StatelessWidget {
           );
         },
         providerConfigs: const [
+          GoogleProviderConfiguration(
+            clientId: googleClientKey,
+          ),
           EmailProviderConfiguration(),
         ],
         actions: [
