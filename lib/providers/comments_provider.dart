@@ -5,8 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
 class CommentsProvider with ChangeNotifier {
-  final List<dynamic> _commentsList = [];
-  dynamic get getCommentsList => _commentsList;
+  List<dynamic> _commentsList = [];
+  List<dynamic> get getCommentsList => _commentsList;
 
   Future<bool> sendComment(postObj, comment) async {
     try {
@@ -21,13 +21,23 @@ class CommentsProvider with ChangeNotifier {
                 }),
               );
       FirebaseFirestore.instance
-          .collection('pinpoint_post')
-          .doc(postObj["post_id"])
-          .update({'comments_number': postObj["comments_number"] + 1});
-      FirebaseFirestore.instance
           .collection('pinpoint_comments')
           .doc(commentId.id)
           .update({'comment_id': commentId.id});
+
+      DocumentSnapshot<Map<String, dynamic>> post = await FirebaseFirestore
+          .instance
+          .collection('pinpoint_post')
+          .doc(postObj["post_id"])
+          .get();
+
+      log('COMMENTS NUMBER IN CLOUD ${post.data()!['comments_number']}');
+      int cloudCommentsNum = post.data()!['comments_number'];
+
+      FirebaseFirestore.instance
+          .collection('pinpoint_post')
+          .doc(postObj["post_id"])
+          .update({'comments_number': cloudCommentsNum + 1});
       notifyListeners();
       return true;
     } catch (e) {
@@ -98,5 +108,28 @@ class CommentsProvider with ChangeNotifier {
     } catch (e) {
       log(e.toString());
     }
+  }
+
+  void updateComments(snapshot) {
+    _commentsList = snapshot.docs;
+  }
+
+  Future<void> resetComments({required postData}) async {
+    _commentsList = [];
+
+    QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+        .instance
+        .collection("pinpoint_comments")
+        .where('post_id', isEqualTo: postData['post_id'])
+        .get();
+
+    List<QueryDocumentSnapshot<Map<String, dynamic>>> docs = snapshot.docs;
+
+    for (var doc in docs) {
+      dynamic comment = doc.data();
+      _commentsList.add(comment);
+    }
+
+    notifyListeners();
   }
 }

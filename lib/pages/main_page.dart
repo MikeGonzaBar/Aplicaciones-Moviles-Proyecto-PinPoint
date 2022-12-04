@@ -60,6 +60,7 @@ class _MainPageState extends State<MainPage> {
                     icon: const Icon(Icons.power_settings_new),
                     tooltip: 'Logout',
                     onPressed: () async {
+                      await context.read<PostsProvider>().cleanLists();
                       await FirebaseAuth.instance.signOut();
                       if (!mounted) return;
                       Navigator.of(context).pushReplacement(

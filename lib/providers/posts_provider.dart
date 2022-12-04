@@ -30,7 +30,7 @@ class PostsProvider with ChangeNotifier {
                   'username': FirebaseAuth.instance.currentUser!.displayName
                 }),
               );
-      FirebaseFirestore.instance
+      await FirebaseFirestore.instance
           .collection('pinpoint_post')
           .doc(postId.id)
           .update({'post_id': postId.id});
@@ -44,6 +44,7 @@ class PostsProvider with ChangeNotifier {
         'is_anonymous': postObj["isAnon"],
         'latitude': postObj["location"].latitude,
         'longitude': postObj["location"].longitude,
+        'post_id': postId.id,
         'text': postObj["text"],
         'up_votes': [],
         'user_id': FirebaseAuth.instance.currentUser!.uid,
@@ -142,7 +143,6 @@ class PostsProvider with ChangeNotifier {
   }
 
   Future<void> getList() async {
-    num newPostNumber = 0;
     QuerySnapshot<Map<String, dynamic>> postsSnapshot = await FirebaseFirestore
         .instance
         .collection('pinpoint_post')
@@ -150,17 +150,8 @@ class PostsProvider with ChangeNotifier {
         .get();
     List<QueryDocumentSnapshot<Map<String, dynamic>>> docs = postsSnapshot.docs;
 
-    for (var doc in docs) {
-      dynamic post = doc.data();
+    filterList(docs);
 
-      if (!_allPostsList.toString().contains(post.toString())) {
-        newPostNumber++;
-      }
-    }
-
-    if (newPostNumber > 0) {
-      filterList(docs);
-    }
     notifyListeners();
   }
 
@@ -170,6 +161,7 @@ class PostsProvider with ChangeNotifier {
 
     _allPostsList = [];
     _filteredPostsList = [];
+
     for (var doc in docs) {
       dynamic post = doc.data();
       DateTime limitDate = (post['date_limit'] as Timestamp).toDate();
@@ -181,6 +173,7 @@ class PostsProvider with ChangeNotifier {
       }
       _allPostsList.add(post);
     }
+
     notifyListeners();
   }
 
@@ -208,25 +201,78 @@ class PostsProvider with ChangeNotifier {
     return response;
   }
 
-  deleteMyPost(postObject) {
-    int index = -1;
+  dynamic deleteMyPost(postObject) async {
+    int index = getlocalIndex(postObject);
 
+    if (index != -1) {
+      _filteredPostsList.removeAt(index);
+    }
+    await FirebaseFirestore.instance
+        .collection('pinpoint_post')
+        .doc(postObject['post_id'])
+        .delete()
+        .then((value) => log("Post Deleted"))
+        .catchError((error) => log("Failed to delete post: $error"));
+
+    var commentsQuery = await FirebaseFirestore.instance
+        .collection('pinpoint_comments')
+        .where('post_id', isEqualTo: postObject['post_id'])
+        .get();
+    List<QueryDocumentSnapshot<Map<String, dynamic>>> comments =
+        commentsQuery.docs;
+
+    for (var doc in comments) {
+      dynamic comment = doc.data();
+
+      await FirebaseFirestore.instance
+          .collection('pinpoint_comments')
+          .doc(comment['comment_id'])
+          .delete()
+          .then((value) => log("Coment Deleted"))
+          .catchError((error) => log("Failed to delete comment: $error"));
+    }
+    notifyListeners();
+  }
+
+  cleanLists() {
+    _filteredPostsList = [];
+    _allPostsList = [];
+  }
+
+  Future<void> updateCommentsNumber(postData, int length) async {
+    //UpdateLocalCommentNumber()
+    int index = getlocalIndex(postData);
+
+    try {
+      postData['comments_number'] = length;
+    } catch (e) {
+      Map<String, dynamic> newPostData = postData.data();
+      newPostData['comments_number'] = length;
+      postData = newPostData;
+    }
+
+    _filteredPostsList[index] = postData;
+
+    await FirebaseFirestore.instance
+        .collection('pinpoint_post')
+        .doc(postData["post_id"])
+        .update({'comments_number': length})
+        .then((value) => log("Comment number updated"))
+        .catchError((error) => log("Failed to update comment number: $error"));
+
+    // postData
+
+    // _filteredPostsList[index]
+  }
+
+  int getlocalIndex(postObject) {
+    int index = -1;
     for (var i = 0; i < _filteredPostsList.length; i++) {
       if (_filteredPostsList[i]['post_id'] == postObject['post_id']) {
         index = i;
         break;
       }
     }
-
-    if (index != -1) {
-      _filteredPostsList.removeAt(index);
-    }
-    notifyListeners();
-    FirebaseFirestore.instance
-        .collection('pinpoint_post')
-        .doc(postObject['post_id'])
-        .delete()
-        .then((value) => log("User Deleted"))
-        .catchError((error) => log("Failed to delete user: $error"));
+    return index;
   }
 }
