@@ -159,11 +159,9 @@ class PostsProvider with ChangeNotifier {
       List<QueryDocumentSnapshot<Map<String, dynamic>>> docs) async {
     Position position = await _getPosition();
 
-    log(_filteredPostsList.toString());
-
     _allPostsList = [];
     _filteredPostsList = [];
-    log(_filteredPostsList.toString());
+
     for (var doc in docs) {
       dynamic post = doc.data();
       DateTime limitDate = (post['date_limit'] as Timestamp).toDate();
@@ -175,7 +173,7 @@ class PostsProvider with ChangeNotifier {
       }
       _allPostsList.add(post);
     }
-    log(_filteredPostsList.toString());
+
     notifyListeners();
   }
 
@@ -204,14 +202,7 @@ class PostsProvider with ChangeNotifier {
   }
 
   dynamic deleteMyPost(postObject) async {
-    int index = -1;
-
-    for (var i = 0; i < _filteredPostsList.length; i++) {
-      if (_filteredPostsList[i]['post_id'] == postObject['post_id']) {
-        index = i;
-        break;
-      }
-    }
+    int index = getlocalIndex(postObject);
 
     if (index != -1) {
       _filteredPostsList.removeAt(index);
@@ -229,10 +220,10 @@ class PostsProvider with ChangeNotifier {
         .get();
     List<QueryDocumentSnapshot<Map<String, dynamic>>> comments =
         commentsQuery.docs;
-    log(comments.toString());
+
     for (var doc in comments) {
       dynamic comment = doc.data();
-      log(comment.toString());
+
       await FirebaseFirestore.instance
           .collection('pinpoint_comments')
           .doc(comment['comment_id'])
@@ -248,7 +239,40 @@ class PostsProvider with ChangeNotifier {
     _allPostsList = [];
   }
 
-  updateCommentNumber(postData) {
-    log(postData.toString());
+  Future<void> updateCommentsNumber(postData, int length) async {
+    //UpdateLocalCommentNumber()
+    int index = getlocalIndex(postData);
+
+    try {
+      postData['comments_number'] = length;
+    } catch (e) {
+      Map<String, dynamic> newPostData = postData.data();
+      newPostData['comments_number'] = length;
+      postData = newPostData;
+    }
+
+    _filteredPostsList[index] = postData;
+
+    await FirebaseFirestore.instance
+        .collection('pinpoint_post')
+        .doc(postData["post_id"])
+        .update({'comments_number': length})
+        .then((value) => log("Comment number updated"))
+        .catchError((error) => log("Failed to update comment number: $error"));
+
+    // postData
+
+    // _filteredPostsList[index]
+  }
+
+  int getlocalIndex(postObject) {
+    int index = -1;
+    for (var i = 0; i < _filteredPostsList.length; i++) {
+      if (_filteredPostsList[i]['post_id'] == postObject['post_id']) {
+        index = i;
+        break;
+      }
+    }
+    return index;
   }
 }

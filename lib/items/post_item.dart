@@ -216,6 +216,7 @@ class _PostItemState extends State<PostItem> {
       if (!mounted) return;
       await context.read<PostsProvider>().downVotePost(widget.postObject);
     }
+    setState(() {});
     return;
   }
 
@@ -228,6 +229,7 @@ class _PostItemState extends State<PostItem> {
       if (!mounted) return;
       await context.read<PostsProvider>().upVotePost(widget.postObject);
     }
+    setState(() {});
     return;
   }
 

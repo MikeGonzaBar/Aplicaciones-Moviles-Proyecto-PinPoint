@@ -111,20 +111,7 @@ class CommentsProvider with ChangeNotifier {
   }
 
   void updateComments(snapshot) {
-    log('IN UPDATE COMMENTS');
-    log('Length pre update ${_commentsList.length}');
     _commentsList = snapshot.docs;
-    log('Length post update ${_commentsList.length}');
-
-    log(_commentsList.toString());
-    List<QueryDocumentSnapshot<Map<String, dynamic>>> docs = snapshot.docs;
-    log(snapshot.toString());
-    log(snapshot.docs.toString());
-
-    for (var doc in docs) {
-      dynamic comment = doc.data();
-      log(comment.toString());
-    }
   }
 
   Future<void> resetComments({required postData}) async {
@@ -137,8 +124,6 @@ class CommentsProvider with ChangeNotifier {
         .get();
 
     List<QueryDocumentSnapshot<Map<String, dynamic>>> docs = snapshot.docs;
-    log(snapshot.toString());
-    log(snapshot.docs.toString());
 
     for (var doc in docs) {
       dynamic comment = doc.data();
