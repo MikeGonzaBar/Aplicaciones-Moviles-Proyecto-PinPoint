@@ -159,8 +159,11 @@ class PostsProvider with ChangeNotifier {
       List<QueryDocumentSnapshot<Map<String, dynamic>>> docs) async {
     Position position = await _getPosition();
 
+    log(_filteredPostsList.toString());
+
     _allPostsList = [];
     _filteredPostsList = [];
+    log(_filteredPostsList.toString());
     for (var doc in docs) {
       dynamic post = doc.data();
       DateTime limitDate = (post['date_limit'] as Timestamp).toDate();
@@ -172,6 +175,7 @@ class PostsProvider with ChangeNotifier {
       }
       _allPostsList.add(post);
     }
+    log(_filteredPostsList.toString());
     notifyListeners();
   }
 
@@ -199,7 +203,7 @@ class PostsProvider with ChangeNotifier {
     return response;
   }
 
-  deleteMyPost(postObject) {
+  dynamic deleteMyPost(postObject) async {
     int index = -1;
 
     for (var i = 0; i < _filteredPostsList.length; i++) {
@@ -212,12 +216,30 @@ class PostsProvider with ChangeNotifier {
     if (index != -1) {
       _filteredPostsList.removeAt(index);
     }
-    FirebaseFirestore.instance
+    await FirebaseFirestore.instance
         .collection('pinpoint_post')
         .doc(postObject['post_id'])
         .delete()
-        .then((value) => log("User Deleted"))
-        .catchError((error) => log("Failed to delete user: $error"));
+        .then((value) => log("Post Deleted"))
+        .catchError((error) => log("Failed to delete post: $error"));
+
+    var commentsQuery = await FirebaseFirestore.instance
+        .collection('pinpoint_comments')
+        .where('post_id', isEqualTo: postObject['post_id'])
+        .get();
+    List<QueryDocumentSnapshot<Map<String, dynamic>>> comments =
+        commentsQuery.docs;
+    log(comments.toString());
+    for (var doc in comments) {
+      dynamic comment = doc.data();
+      log(comment.toString());
+      await FirebaseFirestore.instance
+          .collection('pinpoint_comments')
+          .doc(comment['comment_id'])
+          .delete()
+          .then((value) => log("Coment Deleted"))
+          .catchError((error) => log("Failed to delete comment: $error"));
+    }
     notifyListeners();
   }
 

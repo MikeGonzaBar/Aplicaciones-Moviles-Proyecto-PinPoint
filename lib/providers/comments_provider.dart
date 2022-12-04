@@ -7,7 +7,6 @@ import 'package:flutter/foundation.dart';
 class CommentsProvider with ChangeNotifier {
   List<dynamic> _commentsList = [];
   List<dynamic> get getCommentsList => _commentsList;
-  dynamic get getCommentsListLength => _commentsList.length;
 
   Future<bool> sendComment(postObj, comment) async {
     try {
@@ -22,13 +21,23 @@ class CommentsProvider with ChangeNotifier {
                 }),
               );
       FirebaseFirestore.instance
-          .collection('pinpoint_post')
-          .doc(postObj["post_id"])
-          .update({'comments_number': postObj["comments_number"] + 1});
-      FirebaseFirestore.instance
           .collection('pinpoint_comments')
           .doc(commentId.id)
           .update({'comment_id': commentId.id});
+
+      DocumentSnapshot<Map<String, dynamic>> post = await FirebaseFirestore
+          .instance
+          .collection('pinpoint_post')
+          .doc(postObj["post_id"])
+          .get();
+
+      log('COMMENTS NUMBER IN CLOUD ${post.data()!['comments_number']}');
+      int cloudCommentsNum = post.data()!['comments_number'];
+
+      FirebaseFirestore.instance
+          .collection('pinpoint_post')
+          .doc(postObj["post_id"])
+          .update({'comments_number': cloudCommentsNum + 1});
       notifyListeners();
       return true;
     } catch (e) {
@@ -102,7 +111,40 @@ class CommentsProvider with ChangeNotifier {
   }
 
   void updateComments(snapshot) {
+    log('IN UPDATE COMMENTS');
+    log('Length pre update ${_commentsList.length}');
     _commentsList = snapshot.docs;
+    log('Length post update ${_commentsList.length}');
+
     log(_commentsList.toString());
+    List<QueryDocumentSnapshot<Map<String, dynamic>>> docs = snapshot.docs;
+    log(snapshot.toString());
+    log(snapshot.docs.toString());
+
+    for (var doc in docs) {
+      dynamic comment = doc.data();
+      log(comment.toString());
+    }
+  }
+
+  Future<void> resetComments({required postData}) async {
+    _commentsList = [];
+
+    QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+        .instance
+        .collection("pinpoint_comments")
+        .where('post_id', isEqualTo: postData['post_id'])
+        .get();
+
+    List<QueryDocumentSnapshot<Map<String, dynamic>>> docs = snapshot.docs;
+    log(snapshot.toString());
+    log(snapshot.docs.toString());
+
+    for (var doc in docs) {
+      dynamic comment = doc.data();
+      _commentsList.add(comment);
+    }
+
+    notifyListeners();
   }
 }

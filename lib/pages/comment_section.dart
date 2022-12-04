@@ -36,178 +36,182 @@ class _CommentSectionState extends State<CommentSection> {
             SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(12),
-                child: Column(
-                  children: [
-                    // POST AND COMMENTS COLUMN
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                child: FirestoreQueryBuilder<dynamic>(
+                  pageSize: 100,
+                  query: FirebaseFirestore.instance
+                      .collection("pinpoint_comments")
+                      .where('post_id', isEqualTo: widget.postData['post_id']),
+                  builder: (context, snapshot, _) {
+                    if (snapshot.isFetching) {
+                      return const CircularProgressIndicator();
+                    }
+                    if (snapshot.hasError) {
+                      return Text('error ${snapshot.error}');
+                    }
+
+                    context.watch<CommentsProvider>().updateComments(snapshot);
+
+                    List<dynamic> reversedSnapshot =
+                        context.watch<CommentsProvider>().getCommentsList;
+
+                    return Column(
                       children: [
-                        // POST CONTAINER
-                        Container(
-                          decoration: BoxDecoration(
-                            color: const Color(0xffe8eaed),
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          padding: const EdgeInsets.all(18),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // MAIN TEXT
-                              Text(
-                                widget.postData["text"],
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 18),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                color: const Color(0xffe8eaed),
+                                borderRadius: BorderRadius.circular(15),
                               ),
-                              // IMAGE
-                              if (widget.postData["image"] != "")
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 10),
-                                  child: Center(
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: Image(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.75,
-                                        image: NetworkImage(
-                                            widget.postData["image"]),
-                                      ),
-                                    ),
+                              padding: const EdgeInsets.all(18),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // MAIN TEXT
+                                  Text(
+                                    widget.postData["text"],
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18),
                                   ),
-                                ),
-                              // AUTHOR
-                              Padding(
-                                padding: const EdgeInsets.only(top: 6),
-                                child: Text(
-                                  "${widget.postData["is_anonymous"] ? "Anonymous" : widget.postData["username"]}",
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w500),
-                                  textAlign: TextAlign.start,
-                                ),
-                              ),
-                              // POST INFO AND BUTTONS
-                              Padding(
-                                padding: const EdgeInsets.only(top: 16),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                        flex: 5,
-                                        child: TimeDistanceText(
-                                            postObject: widget.postData)),
-                                    Expanded(
-                                      flex: 1,
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          shareContent(
-                                              context, widget.postData);
-                                        },
-                                        child: const Icon(
-                                          Icons.share,
-                                          size: 20,
+                                  // IMAGE
+                                  if (widget.postData["image"] != "")
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 10),
+                                      child: Center(
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          child: Image(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.75,
+                                            image: NetworkImage(
+                                                widget.postData["image"]),
+                                          ),
                                         ),
                                       ),
                                     ),
-                                    Expanded(
-                                      flex: 2,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          const Icon(
-                                            Icons.comment_outlined,
-                                            size: 20,
-                                          ),
-                                          Text(
-                                            "${context.watch<CommentsProvider>().getCommentsListLength}",
-                                            style:
-                                                const TextStyle(fontSize: 20),
-                                          ),
-                                        ],
-                                      ),
+                                  // AUTHOR
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 6),
+                                    child: Text(
+                                      "${widget.postData["is_anonymous"] ? "Anonymous" : widget.postData["username"]}",
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.w500),
+                                      textAlign: TextAlign.start,
                                     ),
-                                    Expanded(
-                                      flex: 3,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          GestureDetector(
-                                            onTap: _downVote,
-                                            child: Icon(
-                                              (Icons
-                                                  .keyboard_arrow_down_rounded),
-                                              size: 30,
-                                              color: widget
-                                                      .postData["down_votes"]
-                                                      .contains(FirebaseAuth
-                                                          .instance
-                                                          .currentUser!
-                                                          .uid)
-                                                  ? const Color(0xFFFF7A06)
-                                                  : Colors.black,
+                                  ),
+                                  // POST INFO AND BUTTONS
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 16),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                            flex: 5,
+                                            child: TimeDistanceText(
+                                                postObject: widget.postData)),
+                                        Expanded(
+                                          flex: 1,
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              shareContent(
+                                                  context, widget.postData);
+                                            },
+                                            child: const Icon(
+                                              Icons.share,
+                                              size: 20,
                                             ),
                                           ),
-                                          Text(
-                                            _getVotesNumber(),
-                                            style:
-                                                const TextStyle(fontSize: 20),
+                                        ),
+                                        Expanded(
+                                          flex: 2,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              const Icon(
+                                                Icons.comment_outlined,
+                                                size: 20,
+                                              ),
+                                              Text(
+                                                "${reversedSnapshot.length}",
+                                                style: const TextStyle(
+                                                    fontSize: 20),
+                                              ),
+                                            ],
                                           ),
-                                          GestureDetector(
-                                            onTap: _upVote,
-                                            child: Icon(
-                                              (Icons.keyboard_arrow_up_rounded),
-                                              size: 30,
-                                              color: widget.postData["up_votes"]
-                                                      .contains(FirebaseAuth
-                                                          .instance
-                                                          .currentUser!
-                                                          .uid)
-                                                  ? const Color(0xFFFF7A06)
-                                                  : Colors.black,
-                                            ),
+                                        ),
+                                        Expanded(
+                                          flex: 3,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              GestureDetector(
+                                                onTap: _downVote,
+                                                child: Icon(
+                                                  (Icons
+                                                      .keyboard_arrow_down_rounded),
+                                                  size: 30,
+                                                  color: widget.postData[
+                                                              "down_votes"]
+                                                          .contains(FirebaseAuth
+                                                              .instance
+                                                              .currentUser!
+                                                              .uid)
+                                                      ? const Color(0xFFFF7A06)
+                                                      : Colors.black,
+                                                ),
+                                              ),
+                                              Text(
+                                                _getVotesNumber(),
+                                                style: const TextStyle(
+                                                    fontSize: 20),
+                                              ),
+                                              GestureDetector(
+                                                onTap: _upVote,
+                                                child: Icon(
+                                                  (Icons
+                                                      .keyboard_arrow_up_rounded),
+                                                  size: 30,
+                                                  color: widget
+                                                          .postData["up_votes"]
+                                                          .contains(FirebaseAuth
+                                                              .instance
+                                                              .currentUser!
+                                                              .uid)
+                                                      ? const Color(0xFFFF7A06)
+                                                      : Colors.black,
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        // COMMENT TEXT DIVIDER
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text("Comentarios:"),
-                        ),
-                        // COMMENT CONTAINER
-                        FirestoreQueryBuilder<dynamic>(
-                          pageSize: 100,
-                          query: FirebaseFirestore.instance
-                              .collection("pinpoint_comments")
-                              .where('post_id',
-                                  isEqualTo: widget.postData['post_id']),
-                          builder: (context, snapshot, _) {
-                            if (snapshot.isFetching) {
-                              return const CircularProgressIndicator();
-                            }
-                            if (snapshot.hasError) {
-                              return Text('error ${snapshot.error}');
-                            }
-
-                            context
-                                .read<CommentsProvider>()
-                                .updateComments(snapshot);
-
-                            List<dynamic> reversedSnapshot = context
-                                .watch<CommentsProvider>()
-                                .getCommentsList;
-
-                            return ListView.builder(
+                                  )
+                                ],
+                              ),
+                            ),
+                            // COMMENT TEXT DIVIDER
+                            const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text("Comentarios:"),
+                            ),
+                            ListView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
                               itemCount: reversedSnapshot.length + 1,
                               itemBuilder: (BuildContext context, int index) {
+                                if (snapshot.hasMore &&
+                                    index + 1 == snapshot.docs.length) {
+                                  // Tell FirestoreQueryBuilder to try to obtain more items.
+                                  // It is safe to call this function from within the build method.
+                                  snapshot.fetchMore();
+                                }
                                 if (index != reversedSnapshot.length) {
                                   return CommentItem(
                                       commentData: reversedSnapshot[index]);
@@ -216,12 +220,12 @@ class _CommentSectionState extends State<CommentSection> {
                                   return const EndOfScrollItem();
                                 }
                               },
-                            );
-                          },
+                            ),
+                          ],
                         ),
                       ],
-                    ),
-                  ],
+                    );
+                  },
                 ),
               ),
             ),

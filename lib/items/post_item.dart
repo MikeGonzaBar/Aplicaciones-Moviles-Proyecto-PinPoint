@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pinpoint/pages/comment_section.dart';
+import 'package:pinpoint/providers/comments_provider.dart';
 import 'package:pinpoint/providers/posts_provider.dart';
 import 'package:pinpoint/widgets/time_distance_text.dart';
 import 'package:provider/provider.dart';
@@ -27,8 +28,11 @@ class _PostItemState extends State<PostItem> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (() {
+      onTap: (() async {
         if (!widget.isInComment) {
+          await context
+              .read<CommentsProvider>()
+              .resetComments(postData: widget.postObject);
           Navigator.of(context).push(
             MaterialPageRoute(
                 builder: (context) =>
