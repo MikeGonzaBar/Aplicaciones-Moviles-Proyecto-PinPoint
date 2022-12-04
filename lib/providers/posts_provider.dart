@@ -30,7 +30,7 @@ class PostsProvider with ChangeNotifier {
                   'username': FirebaseAuth.instance.currentUser!.displayName
                 }),
               );
-      FirebaseFirestore.instance
+      await FirebaseFirestore.instance
           .collection('pinpoint_post')
           .doc(postId.id)
           .update({'post_id': postId.id});
@@ -44,6 +44,7 @@ class PostsProvider with ChangeNotifier {
         'is_anonymous': postObj["isAnon"],
         'latitude': postObj["location"].latitude,
         'longitude': postObj["location"].longitude,
+        'post_id': postId.id,
         'text': postObj["text"],
         'up_votes': [],
         'user_id': FirebaseAuth.instance.currentUser!.uid,
@@ -142,7 +143,6 @@ class PostsProvider with ChangeNotifier {
   }
 
   Future<void> getList() async {
-    num newPostNumber = 0;
     QuerySnapshot<Map<String, dynamic>> postsSnapshot = await FirebaseFirestore
         .instance
         .collection('pinpoint_post')
@@ -150,17 +150,8 @@ class PostsProvider with ChangeNotifier {
         .get();
     List<QueryDocumentSnapshot<Map<String, dynamic>>> docs = postsSnapshot.docs;
 
-    for (var doc in docs) {
-      dynamic post = doc.data();
+    filterList(docs);
 
-      if (!_allPostsList.toString().contains(post.toString())) {
-        newPostNumber++;
-      }
-    }
-
-    if (newPostNumber > 0) {
-      filterList(docs);
-    }
     notifyListeners();
   }
 
@@ -221,12 +212,21 @@ class PostsProvider with ChangeNotifier {
     if (index != -1) {
       _filteredPostsList.removeAt(index);
     }
-    notifyListeners();
     FirebaseFirestore.instance
         .collection('pinpoint_post')
         .doc(postObject['post_id'])
         .delete()
         .then((value) => log("User Deleted"))
         .catchError((error) => log("Failed to delete user: $error"));
+    notifyListeners();
+  }
+
+  cleanLists() {
+    _filteredPostsList = [];
+    _allPostsList = [];
+  }
+
+  updateCommentNumber(postData) {
+    log(postData.toString());
   }
 }

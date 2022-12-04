@@ -118,7 +118,7 @@ class _CommentSectionState extends State<CommentSection> {
                                             size: 20,
                                           ),
                                           Text(
-                                            "${widget.postData["comments_number"]}",
+                                            "${context.watch<CommentsProvider>().getCommentsListLength}",
                                             style:
                                                 const TextStyle(fontSize: 20),
                                           ),
@@ -195,9 +195,13 @@ class _CommentSectionState extends State<CommentSection> {
                               return Text('error ${snapshot.error}');
                             }
 
-                            List<QueryDocumentSnapshot<dynamic>>
-                                reversedSnapshot =
-                                snapshot.docs.reversed.toList();
+                            context
+                                .read<CommentsProvider>()
+                                .updateComments(snapshot);
+
+                            List<dynamic> reversedSnapshot = context
+                                .watch<CommentsProvider>()
+                                .getCommentsList;
 
                             return ListView.builder(
                               shrinkWrap: true,

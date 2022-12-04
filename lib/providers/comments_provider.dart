@@ -5,8 +5,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
 class CommentsProvider with ChangeNotifier {
-  final List<dynamic> _commentsList = [];
-  dynamic get getCommentsList => _commentsList;
+  List<dynamic> _commentsList = [];
+  List<dynamic> get getCommentsList => _commentsList;
+  dynamic get getCommentsListLength => _commentsList.length;
 
   Future<bool> sendComment(postObj, comment) async {
     try {
@@ -98,5 +99,10 @@ class CommentsProvider with ChangeNotifier {
     } catch (e) {
       log(e.toString());
     }
+  }
+
+  void updateComments(snapshot) {
+    _commentsList = snapshot.docs;
+    log(_commentsList.toString());
   }
 }
