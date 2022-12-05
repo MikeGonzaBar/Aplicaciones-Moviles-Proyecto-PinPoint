@@ -142,7 +142,7 @@ class PostsProvider with ChangeNotifier {
     }
   }
 
-  Future<void> getList() async {
+  Future<void> getList(int filterOption) async {
     QuerySnapshot<Map<String, dynamic>> postsSnapshot = await FirebaseFirestore
         .instance
         .collection('pinpoint_post')
@@ -150,25 +150,26 @@ class PostsProvider with ChangeNotifier {
         .get();
     List<QueryDocumentSnapshot<Map<String, dynamic>>> docs = postsSnapshot.docs;
 
-    filterList(docs);
+    filterList(docs, filterOption);
 
     notifyListeners();
   }
 
   Future<void> filterList(
-      List<QueryDocumentSnapshot<Map<String, dynamic>>> docs) async {
+      List<QueryDocumentSnapshot<Map<String, dynamic>>> docs,
+      int filterOption) async {
     Position position = await _getPosition();
 
     _allPostsList = [];
     _filteredPostsList = [];
 
-    for (var doc in docs) {
+    for (QueryDocumentSnapshot<Map<String, dynamic>> doc in docs) {
       dynamic post = doc.data();
       DateTime limitDate = (post['date_limit'] as Timestamp).toDate();
       DateTime today = DateTime.now();
       if (today.isBefore(limitDate) &&
           !_filteredPostsList.contains(post) &&
-          await _getProximity(post, position)) {
+          await _getProximity(post, position, filterOption)) {
         _filteredPostsList.add(post);
       }
       _allPostsList.add(post);
@@ -188,15 +189,32 @@ class PostsProvider with ChangeNotifier {
     return position;
   }
 
-  Future<bool> _getProximity(dynamic post, Position position) async {
+  Future<bool> _getProximity(
+      dynamic post, Position position, int filterOption) async {
     var distanceInMeters = Geolocator.distanceBetween(
       position.latitude,
       position.longitude,
       post["latitude"],
       post["longitude"],
     );
+    log(filterOption.toString());
 
-    bool response = distanceInMeters <= 2000 ? true : false;
+    // bool response = distanceInMeters <= 2000 ? true : false;
+    bool response = filterOption == 0
+        ? distanceInMeters <= 2000
+            ? true
+            : false
+        : filterOption == 1
+            ? distanceInMeters < 500
+                ? true
+                : false
+            : filterOption == 2
+                ? distanceInMeters > 500 && distanceInMeters <= 1000
+                    ? true
+                    : false
+                : distanceInMeters > 1000 && distanceInMeters <= 2000
+                    ? true
+                    : false;
 
     return response;
   }

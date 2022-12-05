@@ -97,6 +97,6 @@ class _MainPageState extends State<MainPage> {
   }
 
   Future<void> _getList(BuildContext context) async {
-    await context.read<PostsProvider>().getList();
+    await context.read<PostsProvider>().getList(0);
   }
 }

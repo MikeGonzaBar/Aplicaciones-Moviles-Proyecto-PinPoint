@@ -62,6 +62,6 @@ class MyApp extends StatelessWidget {
   }
 
   void _getList(BuildContext context) {
-    context.read<PostsProvider>().getList();
+    context.read<PostsProvider>().getList(0);
   }
 }
