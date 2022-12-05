@@ -33,6 +33,7 @@ class _PostItemState extends State<PostItem> {
           await context
               .read<CommentsProvider>()
               .resetComments(postData: widget.postObject);
+          if (!mounted) return;
           Navigator.of(context).push(
             MaterialPageRoute(
                 builder: (context) =>
