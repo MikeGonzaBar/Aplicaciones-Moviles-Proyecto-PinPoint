@@ -64,7 +64,7 @@ class _FeedState extends State<Feed> {
                             style: TextStyle(
                               color: filter == 0
                                   ? const Color(0xFFFF7A06)
-                                  : Color(0xFF009fb7),
+                                  : const Color(0xFF009fb7),
                             ),
                           ),
                         ),
@@ -89,7 +89,7 @@ class _FeedState extends State<Feed> {
                             style: TextStyle(
                               color: filter == 1
                                   ? const Color(0xFFFF7A06)
-                                  : Color(0xFF009fb7),
+                                  : const Color(0xFF009fb7),
                             ),
                           ),
                         ),
@@ -114,7 +114,7 @@ class _FeedState extends State<Feed> {
                             style: TextStyle(
                               color: filter == 2
                                   ? const Color(0xFFFF7A06)
-                                  : Color(0xFF009fb7),
+                                  : const Color(0xFF009fb7),
                             ),
                           ),
                         ),
@@ -139,7 +139,7 @@ class _FeedState extends State<Feed> {
                             style: TextStyle(
                               color: filter == 3
                                   ? const Color(0xFFFF7A06)
-                                  : Color(0xFF009fb7),
+                                  : const Color(0xFF009fb7),
                             ),
                           ),
                         ),
