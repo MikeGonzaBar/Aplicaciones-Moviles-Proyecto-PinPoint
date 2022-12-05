@@ -50,7 +50,7 @@ class _TimeDistanceTextState extends State<TimeDistanceText> {
         : distanceInMeters > 500 && distanceInMeters <= 1000
             ? '500 - 1km from you'
             : distanceInMeters > 1000 && distanceInMeters <= 2000
-                ? '1 - 1km'
+                ? '1 - 2km'
                 : '2+ km from you';
 
     return response;
