@@ -13,11 +13,12 @@ class CommentsProvider with ChangeNotifier {
       var commentId =
           await FirebaseFirestore.instance.collection('pinpoint_comments').add(
                 ({
-                  'down_votes': [],
                   'post_id': postObj["post_id"],
+                  'username': FirebaseAuth.instance.currentUser!.displayName,
+                  'date': Timestamp.fromDate(DateTime.now()),
                   'text': comment,
                   'up_votes': [],
-                  'username': FirebaseAuth.instance.currentUser!.displayName
+                  'down_votes': [],
                 }),
               );
       FirebaseFirestore.instance
