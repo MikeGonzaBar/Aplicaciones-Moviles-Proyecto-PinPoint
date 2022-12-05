@@ -1,6 +1,3 @@
-import 'dart:developer';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pinpoint/items/post_item.dart';
 import 'package:pinpoint/providers/posts_provider.dart';
@@ -26,6 +23,7 @@ class Feed extends StatelessWidget {
                 ),
               );
               await _getList(context);
+              // ignore: use_build_context_synchronously
               ScaffoldMessenger.of(context).removeCurrentSnackBar();
             },
             child: ListView.builder(

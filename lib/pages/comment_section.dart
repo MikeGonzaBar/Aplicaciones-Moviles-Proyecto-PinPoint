@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -49,12 +47,9 @@ class _CommentSectionState extends State<CommentSection> {
                       if (snapshotDoc.hasError) {
                         return Text('error ${snapshotDoc.error}');
                       }
-                      log('DOCUMENT SNAPSHOT' + snapshotDoc.docs.toString());
                       QueryDocumentSnapshot<dynamic> postSnapshot =
                           snapshotDoc.docs.first;
-                      log('QUERY DOCUMENT SNAPSHOT' + postSnapshot.toString());
                       dynamic post = postSnapshot.data();
-                      log('QUERY DOCUMENT SNAPSHOT' + post.toString());
 
                       // log('DOCUMENT SNAPSHOT'+snapshotDoc.docs.toString());
                       return FirestoreQueryBuilder<dynamic>(
