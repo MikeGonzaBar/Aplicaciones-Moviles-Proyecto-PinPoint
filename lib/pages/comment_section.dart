@@ -62,7 +62,8 @@ class _CommentSectionState extends State<CommentSection> {
                           query: FirebaseFirestore.instance
                               .collection("pinpoint_comments")
                               .where('post_id',
-                                  isEqualTo: widget.postData['post_id']),
+                                  isEqualTo: widget.postData['post_id'])
+                              .orderBy('date', descending: true),
                           builder: (context, snapshot, _) {
                             if (snapshot.isFetching) {
                               return const Center(
